@@ -13,10 +13,11 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #b794f6 0%, #d4b3ff 50%, #e2c5ff 100%);
             min-height: 100vh;
             color: #2d3748;
             overflow-x: hidden;
+            position: relative;
         }
 
         .background-pattern {
@@ -25,11 +26,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0.1;
+            opacity: 0.05;
             background-image:
-                    radial-gradient(circle at 25% 25%, #fff 2px, transparent 2px),
-                    radial-gradient(circle at 75% 75%, #fff 2px, transparent 2px);
-            background-size: 50px 50px;
+                    radial-gradient(circle at 20% 20%, #fff 3px, transparent 3px),
+                    radial-gradient(circle at 60% 40%, #fff 2px, transparent 2px),
+                    radial-gradient(circle at 80% 80%, #fff 3px, transparent 3px);
+            background-size: 80px 80px, 60px 60px, 100px 100px;
             z-index: 0;
         }
 
@@ -45,19 +47,79 @@
             text-align: center;
             margin-bottom: 3rem;
             color: white;
+            position: relative;
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            font-weight: 300;
+            font-size: 3.5rem;
+            font-weight: 700;
             margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #dbeafe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            display: inline-block;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        .header h1::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -60px;
+            width: 35px;
+            height: 22px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 4px;
+            transform: translateY(-50%) rotate(10deg);
+            box-shadow: 0 4px 8px rgba(251, 191, 36, 0.3);
+            animation: cardFloat 2s ease-in-out infinite alternate;
+        }
+
+        .header h1::after {
+            content: '💳';
+            position: absolute;
+            top: 50%;
+            left: -60px;
+            width: 35px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transform: translateY(-50%) rotate(10deg);
+            z-index: 2;
+            animation: cardFloat 2s ease-in-out infinite alternate;
         }
 
         .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            font-weight: 300;
+            font-size: 1.2rem;
+            opacity: 0.95;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            margin-top: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @keyframes titleGlow {
+            0% {
+                text-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 0 20px rgba(255,255,255,0.1);
+            }
+            100% {
+                text-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 0 30px rgba(255,255,255,0.2);
+            }
+        }
+
+        @keyframes cardFloat {
+            0% {
+                transform: translateY(-50%) rotate(10deg) translateY(0px);
+            }
+            100% {
+                transform: translateY(-50%) rotate(10deg) translateY(-5px);
+            }
         }
 
         .main-content {
@@ -117,48 +179,178 @@
             opacity: 1;
         }
 
+        /* NUEVO DISEÑO DE GIFT CARD COLORIDA */
         .gift-card-display {
+            width: 100%;
             height: 320px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #fff5d6;
+            border: 12px solid #fff;
             border-radius: 20px;
             position: relative;
             overflow: hidden;
             margin-bottom: 2rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            transform: rotate(-2deg);
+            transition: transform 0.3s ease;
+        }
+
+        .gift-card-display:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        /* Border con emojis */
+        .gift-card-border {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            height: 25px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            font-size: 1rem;
+            z-index: 10;
+        }
+
+        /* Contenido principal de la tarjeta */
+        .gift-card-main {
+            position: absolute;
+            top: 60px;
+            left: 15px;
+            right: 15px;
+            bottom: 40px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%);
+            border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            position: relative;
+            overflow: hidden;
         }
 
-        .gift-card-display::before {
-            content: '';
+        /* Patrón de fondo en la tarjeta */
+        .gift-card-pattern {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.3;
+            background-image:
+                    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 2px, transparent 2px),
+                    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 3px, transparent 3px),
+                    radial-gradient(circle at 40% 60%, rgba(255,255,255,0.1) 2px, transparent 2px);
+            background-size: 40px 40px, 60px 60px, 30px 30px;
         }
 
+        /* Etiqueta "YOUR STORE" */
+        .gift-card-store {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #ffd93d;
+            color: #d63031;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transform: rotate(-8deg);
+            border: 3px solid #fff;
+            z-index: 15;
+        }
+
+        /* Etiqueta "SALE" */
+        .gift-card-sale {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e17055;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transform: rotate(8deg);
+            border: 3px solid #fff;
+            z-index: 15;
+        }
+
+        /* Contenido central */
         .gift-card-content {
             position: relative;
-            z-index: 2;
+            z-index: 12;
             text-align: center;
+            color: white;
         }
 
         .gift-card-amount {
-            font-size: 3rem;
-            font-weight: 200;
+            font-size: 4rem;
+            font-weight: 900;
             margin-bottom: 0.5rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: #ffd93d;
+            text-shadow:
+                    3px 3px 0px #d63031,
+                    6px 6px 0px rgba(0,0,0,0.3);
+            letter-spacing: -3px;
         }
 
         .gift-card-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            font-weight: 300;
-            letter-spacing: 0.5px;
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-shadow: 2px 2px 0px #d63031;
+        }
+
+        /* Smiley face */
+        .gift-card-smiley {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #ffd93d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 4px solid #fff;
+            z-index: 15;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        /* Pattern inferior */
+        .gift-card-bottom-pattern {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            height: 20px;
+            background: repeating-linear-gradient(
+                    45deg,
+                    #ff6b6b,
+                    #ff6b6b 8px,
+                    #4ecdc4 8px,
+                    #4ecdc4 16px,
+                    #45b7d1 16px,
+                    #45b7d1 24px,
+                    #96ceb4 24px,
+                    #96ceb4 32px,
+                    #ffeaa7 32px,
+                    #ffeaa7 40px
+            );
+            border-radius: 10px;
+            z-index: 10;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+            60% { transform: translateY(-4px); }
         }
 
         .card h2 {
@@ -359,7 +551,18 @@
             }
 
             .header h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
+            }
+
+            .header h1::before,
+            .header h1::after {
+                left: -45px;
+                width: 30px;
+                height: 18px;
+            }
+
+            .header h1::after {
+                font-size: 1rem;
             }
 
             .gift-card-display {
@@ -367,7 +570,7 @@
             }
 
             .gift-card-amount {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
 
             .two-column {
@@ -390,11 +593,29 @@
             <!-- Featured Gift Card Display -->
             <div class="card">
                 <div class="gift-card-display">
-                    <div class="gift-card-content">
-                        <div class="gift-card-amount" id="displayAmount">$250</div>
-                        <div class="gift-card-label">GIFT CARD</div>
+                    <!-- Border superior con emojis -->
+                    <div class="gift-card-border">
+                        <span>❤️</span><span>😊</span><span>🛍️</span><span>❤️</span><span>😊</span><span>🔒</span><span>❤️</span><span>😊</span><span>🛍️</span><span>❤️</span>
                     </div>
+
+                    <!-- Contenido principal de la tarjeta -->
+                    <div class="gift-card-main">
+                        <div class="gift-card-pattern"></div>
+                        <div class="gift-card-store">YOUR STORE</div>
+                        <div class="gift-card-sale">SALE</div>
+
+                        <div class="gift-card-content">
+                            <div class="gift-card-amount" id="displayAmount">$250</div>
+                            <div class="gift-card-label">GIFT VOUCHER</div>
+                        </div>
+
+                        <div class="gift-card-smiley">😊</div>
+                    </div>
+
+                    <!-- Pattern inferior -->
+                    <div class="gift-card-bottom-pattern"></div>
                 </div>
+
                 <h2>
                     <div class="icon">🎁</div>
                     Featured Gift Cards
@@ -459,49 +680,6 @@
                     <div id="registerResult" class="result" style="display: none;"></div>
                 </div>
             </div>
-
-            <script>
-                // Toggle between login and register forms
-                function toggleForm(form) {
-                    const loginForm = document.getElementById('loginForm');
-                    const registerForm = document.getElementById('registerForm');
-
-                    if(form === 'login') {
-                        loginForm.style.display = 'block';
-                        registerForm.style.display = 'none';
-                    } else {
-                        loginForm.style.display = 'none';
-                        registerForm.style.display = 'block';
-                    }
-                }
-
-                // Register new user
-                async function register() {
-                    const user = document.getElementById('registerUser').value;
-                    const password = document.getElementById('registerPassword').value;
-
-                    if(!user || !password) {
-                        showResult('registerResult', { error: 'Please enter username and password' }, true);
-                        return;
-                    }
-
-                    setLoading('registerResult', true);
-                    try {
-                        const response = await fetch(`${API_BASE}/register`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ user, password })
-                        });
-                        const result = await response.json();
-                        showResult('registerResult', result, !!result.error);
-                    } catch(e) {
-                        showResult('registerResult', { error: 'Connection failed' }, true);
-                    }
-                    setLoading('registerResult', false);
-                }
-            </script>
-
-
 
             <!-- My Cards -->
             <div class="card compact-card">
@@ -622,6 +800,45 @@
     const API_BASE = 'http://localhost:8080/api/giftcards';
     let currentToken = '';
 
+    // Toggle between login and register forms
+    function toggleForm(form) {
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+
+        if(form === 'login') {
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+        } else {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+        }
+    }
+
+    // Register new user
+    async function register() {
+        const user = document.getElementById('registerUser').value;
+        const password = document.getElementById('registerPassword').value;
+
+        if(!user || !password) {
+            showResult('registerResult', { error: 'Please enter username and password' }, true);
+            return;
+        }
+
+        setLoading('registerResult', true);
+        try {
+            const response = await fetch(`${API_BASE}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user, password })
+            });
+            const result = await response.json();
+            showResult('registerResult', result, !!result.error);
+        } catch(e) {
+            showResult('registerResult', { error: 'Connection failed' }, true);
+        }
+        setLoading('registerResult', false);
+    }
+
     // Update display amount animation
     function updateDisplayAmount() {
         const amounts = ['$250', '$500', '$1000', '$750'];
@@ -720,13 +937,10 @@
             .join('\n');
     }
 
-
     // Capitalizar la primera letra
     function capitalize(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
-
-
 
     function setLoading(elementId, isLoading) {
         const element = document.getElementById(elementId).closest('.card');
