@@ -1,4 +1,4 @@
-package com.example.tpa;
+package com.example.tp_a;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

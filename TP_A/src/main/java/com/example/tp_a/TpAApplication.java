@@ -1,4 +1,4 @@
-package com.example.tpa;
+package com.example.tp_a;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
