@@ -10,6 +10,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "mgomezpazos"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/mgomezpazos/IngSoftwareTPs.git",
+    "accountId": "368297f5-7c87-4b7e-a2b6-ab8525448ba3"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -47,6 +59,7 @@
       <updated>1757684456672</updated>
       <workItem from="1757684457773" duration="121000" />
       <workItem from="1757685564096" duration="211000" />
+      <workItem from="1757692809328" duration="45000" />
     </task>
     <servers />
   </component>
