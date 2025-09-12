@@ -13,6 +13,26 @@ public class GiftCardController {
     @Autowired
     private GiftCardSystemFacade giftCardSystem;
 
+    // Nuevo: registro de usuario
+    @PostMapping("/register")
+    public ResponseEntity<Map<String, String>> register(@RequestBody Map<String, String> request) {
+        try {
+            String user = request.get("user");
+            String password = request.get("password");
+
+            giftCardSystem.registerUser(user, password);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "User registered successfully",
+                    "user", user
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", e.getMessage()
+            ));
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
         try {

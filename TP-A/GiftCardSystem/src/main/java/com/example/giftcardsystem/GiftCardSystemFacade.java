@@ -120,4 +120,12 @@ public class GiftCardSystemFacade {
     private String generateToken() {
         return UUID.randomUUID().toString();
     }
+
+    public void registerUser(String user, String password) {
+        if (validUsers.containsKey(user)) {
+            throw new RuntimeException("User already exists");
+        }
+        validUsers.put(user, password);
+    }
+
 }
