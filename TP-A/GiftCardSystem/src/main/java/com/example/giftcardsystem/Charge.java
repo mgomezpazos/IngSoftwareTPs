@@ -2,17 +2,22 @@ package com.example.giftcardsystem;
 
 import java.time.LocalDateTime;
 
+import static com.example.giftcardsystem.GiftCard.InvalidChargeDescriptionError;
+import static com.example.giftcardsystem.GiftCard.InvalidMerchantKeyError;
+
 public class Charge {
-    private int amount;
-    private String merchantKey;
-    private String description;
-    private LocalDateTime timestamp;
+    private final int amount;
+    private final String merchantKey;
+    private final String description;
 
     public Charge(int amount, String merchantKey, String description) {
+        validateAmount(amount);
+        validateStringNotNullOrEmpty(merchantKey, InvalidMerchantKeyError);
+        validateStringNotNullOrEmpty(description, InvalidChargeDescriptionError);
+
         this.amount = amount;
         this.merchantKey = merchantKey;
         this.description = description;
-        this.timestamp = LocalDateTime.now();
     }
 
     public int getAmount() {
@@ -27,7 +32,15 @@ public class Charge {
         return description;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    private void validateAmount(int amount) {
+        if (amount <= 0) {
+            throw new RuntimeException(GiftCard.InvalidChargeAmount);
+        }
+    }
+
+    private void validateStringNotNullOrEmpty(String value, String errorMessage) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new RuntimeException(errorMessage);
+        }
     }
 }

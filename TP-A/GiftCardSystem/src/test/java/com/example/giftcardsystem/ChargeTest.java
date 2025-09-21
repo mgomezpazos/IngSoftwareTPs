@@ -6,76 +6,66 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 
 public class ChargeTest {
-
-    private Charge charge;
-    private LocalDateTime beforeCreation;
+    private Charge standardCharge;
+    private static final int STANDARD_AMOUNT = 100;
+    private static final String STANDARD_MERCHANT_KEY = "merchant123";
+    private static final String STANDARD_DESCRIPTION = "Coffee purchase";
 
     @BeforeEach
-    public void setUp() {
-        beforeCreation = LocalDateTime.now();
-        charge = new Charge(100, "merchant123", "Coffee purchase");
+    void setUp() {
+        standardCharge = createCharge(STANDARD_AMOUNT, STANDARD_MERCHANT_KEY, STANDARD_DESCRIPTION);
     }
 
     @Test
-    public void testChargeCreation() {
-        assertEquals(100, charge.getAmount());
-        assertEquals("merchant123", charge.getMerchantKey());
-        assertEquals("Coffee purchase", charge.getDescription());
-
-        // Verify timestamp is recent (within last few seconds)
-        LocalDateTime afterCreation = LocalDateTime.now();
-        assertTrue(charge.getTimestamp().isAfter(beforeCreation) ||
-                charge.getTimestamp().isEqual(beforeCreation));
-        assertTrue(charge.getTimestamp().isBefore(afterCreation) ||
-                charge.getTimestamp().isEqual(afterCreation));
+    public void test01ChargeCreation() {
+        Charge charge = createCharge(STANDARD_AMOUNT, STANDARD_MERCHANT_KEY, STANDARD_DESCRIPTION);
+        assertChargeHasExpectedValues(charge, STANDARD_AMOUNT, STANDARD_MERCHANT_KEY, STANDARD_DESCRIPTION);
     }
 
     @Test
-    public void testChargeWithDifferentValues() {
-        Charge expensiveCharge = new Charge(999, "premium-merchant", "Luxury item");
-
-        assertEquals(999, expensiveCharge.getAmount());
-        assertEquals("premium-merchant", expensiveCharge.getMerchantKey());
-        assertEquals("Luxury item", expensiveCharge.getDescription());
+    public void test02ChargeWithInvalidDescription() {
+        assertThrowsWithMessage(() -> createCharge(STANDARD_AMOUNT, STANDARD_MERCHANT_KEY, ""), GiftCard.InvalidChargeDescriptionError);
+        assertThrowsWithMessage(() -> createCharge(STANDARD_AMOUNT, STANDARD_MERCHANT_KEY, null), GiftCard.InvalidChargeDescriptionError);
+        assertThrowsWithMessage(() -> createCharge(STANDARD_AMOUNT, STANDARD_MERCHANT_KEY, "   "), GiftCard.InvalidChargeDescriptionError);
     }
 
     @Test
-    public void testChargeWithEmptyDescription() {
-        Charge emptyDescCharge = new Charge(50, "merchant456", "");
-
-        assertEquals(50, emptyDescCharge.getAmount());
-        assertEquals("merchant456", emptyDescCharge.getMerchantKey());
-        assertEquals("", emptyDescCharge.getDescription());
+    public void test03InvalidChargeAmount() {
+        assertThrowsWithMessage(() -> createCharge(-500, STANDARD_MERCHANT_KEY, STANDARD_DESCRIPTION), GiftCard.InvalidChargeAmount);
+        assertThrowsWithMessage(() -> createCharge(0, STANDARD_MERCHANT_KEY, STANDARD_DESCRIPTION), GiftCard.InvalidChargeAmount);
     }
 
     @Test
-    public void testChargeTimestampIsImmutable() {
-        LocalDateTime originalTimestamp = charge.getTimestamp();
+    public void test04ChargeWithInvalidMerchantKey() {
+        assertThrowsWithMessage(() -> createCharge(STANDARD_AMOUNT, "", STANDARD_DESCRIPTION), GiftCard.InvalidMerchantKeyError);
 
-        // Wait a bit and get timestamp again
-        try {
-            Thread.sleep(1);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        assertThrowsWithMessage(
+                () -> createCharge(STANDARD_AMOUNT, null, STANDARD_DESCRIPTION),
+                GiftCard.InvalidMerchantKeyError
+        );
 
-        LocalDateTime secondRead = charge.getTimestamp();
-        assertEquals(originalTimestamp, secondRead);
+        assertThrowsWithMessage(
+                () -> createCharge(STANDARD_AMOUNT, "   ", STANDARD_DESCRIPTION),
+                GiftCard.InvalidMerchantKeyError
+        );
     }
 
-    @Test
-    public void testMultipleChargesHaveDifferentTimestamps() {
-        Charge firstCharge = new Charge(100, "merchant1", "First");
 
-        try {
-            Thread.sleep(1); // Ensure different timestamps
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+    private Charge createCharge(int amount, String merchantKey, String description) {
+        return new Charge(amount, merchantKey, description);
+    }
 
-        Charge secondCharge = new Charge(200, "merchant2", "Second");
+    private void assertChargeHasExpectedValues(Charge charge, int expectedAmount,
+                                               String expectedMerchantKey, String expectedDescription) {
+        assertAll("charge properties",
+                () -> assertEquals(expectedAmount, charge.getAmount(), "Amount should match"),
+                () -> assertEquals(expectedMerchantKey, charge.getMerchantKey(), "Merchant key should match"),
+                () -> assertEquals(expectedDescription, charge.getDescription(), "Description should match")
+        );
+    }
 
-        assertTrue(secondCharge.getTimestamp().isAfter(firstCharge.getTimestamp()) ||
-                secondCharge.getTimestamp().isEqual(firstCharge.getTimestamp()));
+    private void assertThrowsWithMessage(Runnable action, String expectedMessage) {
+        RuntimeException exception = assertThrows(RuntimeException.class, action::run);
+        assertEquals(expectedMessage, exception.getMessage());
     }
 }

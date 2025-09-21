@@ -2,13 +2,15 @@ package com.example.giftcardsystem;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+
+import static com.example.giftcardsystem.GiftCard.GiftCardAlreadyClaimedErrorDescription;
+import static com.example.giftcardsystem.GiftCardSystemFacade.GiftCardNotFoundErrorDescription;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
 public class GiftCardSystemFacadeTest {
-
     private GiftCardSystemFacade facade;
     private Map<String, String> validUsers;
     private Map<String, GiftCard> giftCards;
@@ -16,215 +18,272 @@ public class GiftCardSystemFacadeTest {
     private TestMerchantApi testMerchantApi;
     private TestClock testClock;
 
+    private static final String USER_MANUELITA = "Manuelita";
+    private static final String PASSWORD_MANUELITA = "marcoreus11";
+    private static final String USER_ZOE = "Zoe";
+    private static final String PASSWORD_ZOE = "RayoMcqueen95";
+    private static final String INVALID_USER = "Emilio";
+    private static final String INVALID_PASSWORD = "motos1234";
+
+    private static final String CARD_1 = "2204303355";
+    private static final String CARD_2 = "1234567891";
+    private static final String INVALID_CARD = "9876543219";
+    private static final int CARD_1_BALANCE = 1000;
+    private static final int CARD_2_BALANCE = 500;
+
+    private static final String MERCHANT_1 = "merchant1";
+    private static final String MERCHANT_2 = "merchant2";
+    private static final String INVALID_MERCHANT = "MerchantInvalido";
+    private static final String INVALID_TOKEN = "tokenInvalido";
+
     @BeforeEach
     public void setUp() {
-        // Setup valid users
-        validUsers = new HashMap<>();
-        validUsers.put("user1", "password1");
-        validUsers.put("user2", "password2");
-
-        // Setup gift cards
-        giftCards = new HashMap<>();
-        GiftCard card1 = GiftCard.numberedWithBalance("1111222233334444", 1000);
-        GiftCard card2 = GiftCard.numberedWithBalance("5555666677778888", 500);
-        giftCards.put("1111222233334444", card1);
-        giftCards.put("5555666677778888", card2);
-
-        // Setup valid merchants
-        validMerchantKeys = new HashMap<>();
-        validMerchantKeys.put("merchant1", "Coffee Shop");
-        validMerchantKeys.put("merchant2", "Book Store");
-
-        // Setup test dependencies
-        testMerchantApi = new TestMerchantApi();
-        testClock = new TestClock();
+        setupValidUsers();
+        setupGiftCards();
+        setupValidMerchants();
+        setupTestDependencies();
 
         facade = new GiftCardSystemFacade(validUsers, giftCards, validMerchantKeys, testMerchantApi, testClock);
     }
 
     @Test
-    public void testSuccessfulLogin() {
-        String token = facade.loginUser("user1", "password1");
-
+    public void test01SuccessfulLogin() {
+        String token = facade.loginUser(USER_MANUELITA, PASSWORD_MANUELITA);
         assertNotNull(token);
         assertFalse(token.isEmpty());
     }
 
     @Test
-    public void testInvalidUserLogin() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            facade.loginUser("invalidUser", "password1");
-        });
-
-        assertEquals(GiftCardSystemFacade.InvalidUserAndOrPasswordErrorDescription, exception.getMessage());
+    public void test02InvalidLogin() {
+        assertThrowsWithMessage(() -> facade.loginUser(INVALID_USER, INVALID_PASSWORD), GiftCardSystemFacade.InvalidUserAndOrPasswordErrorDescription);
+        assertThrowsWithMessage(() -> facade.loginUser(USER_ZOE, "zoe5"), GiftCardSystemFacade.InvalidUserAndOrPasswordErrorDescription);
     }
 
     @Test
-    public void testInvalidPasswordLogin() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            facade.loginUser("user1", "wrongPassword");
-        });
+    public void test03ClaimGiftCard() {
+        String token = loginUser(USER_ZOE);
 
-        assertEquals(GiftCardSystemFacade.InvalidUserAndOrPasswordErrorDescription, exception.getMessage());
-    }
+        facade.claimGiftCard(token, CARD_1);
 
-    @Test
-    public void testClaimGiftCard() {
-        String token = facade.loginUser("user1", "password1");
-
-        facade.claimGiftCard(token, "1111222233334444");
-
-        GiftCard card = giftCards.get("1111222233334444");
+        GiftCard card = giftCards.get(CARD_1);
         assertTrue(card.isClaimed());
-        assertTrue(card.isClaimedBy("user1"));
+        assertTrue(card.isClaimedBy(USER_ZOE));
     }
 
     @Test
-    public void testClaimWithInvalidToken() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            facade.claimGiftCard("invalidToken", "1111222233334444");
-        });
-
-        assertEquals(GiftCardSystemFacade.InvalidTokenErrorDescription, exception.getMessage());
+    public void test04ClaimWithInvalidToken() {
+        assertThrowsWithMessage(() -> facade.claimGiftCard(INVALID_TOKEN, CARD_1), GiftCardSystemFacade.InvalidTokenErrorDescription);
     }
 
     @Test
-    public void testClaimNonExistentCard() {
-        String token = facade.loginUser("user1", "password1");
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            facade.claimGiftCard(token, "9999888877776666");
-        });
-
-        assertEquals(GiftCardSystemFacade.GiftCardNotFoundErrorDescription, exception.getMessage());
+    public void test05ClaimNonExistentCard() {
+        String token = loginUser(USER_MANUELITA);
+        assertThrowsWithMessage(() -> facade.claimGiftCard(token, INVALID_CARD), GiftCardNotFoundErrorDescription);
     }
 
     @Test
-    public void testGetGiftCardBalance() {
-        String token = facade.loginUser("user1", "password1");
-        facade.claimGiftCard(token, "1111222233334444");
+    public void test06MultipleUsersCannotClaimEachOthersCards() {
+        String token1 = loginUser(USER_MANUELITA);
+        String token2 = loginUser(USER_ZOE);
 
-        int balance = facade.getGiftCardBalance(token, "1111222233334444");
+        facade.claimGiftCard(token1, CARD_1);
 
-        assertEquals(1000, balance);
+        assertThrowsWithMessage(() -> facade.claimGiftCard(token2, CARD_1), GiftCardAlreadyClaimedErrorDescription);
     }
 
     @Test
-    public void testGetBalanceWithoutClaiming() {
-        String token = facade.loginUser("user1", "password1");
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            facade.getGiftCardBalance(token, "1111222233334444");
-        });
-
-        assertTrue(exception.getMessage().contains("Gift card not found or not claimed by user"));
+    public void test07UserCantClaimSameGiftCardTwice() {
+        String token = loginUser(USER_MANUELITA);
+        facade.claimGiftCard(token, CARD_1);
+        assertThrowsWithMessage(() -> facade.claimGiftCard(token, CARD_1), GiftCardAlreadyClaimedErrorDescription);
     }
 
     @Test
-    public void testGetGiftCardCharges() {
-        String token = facade.loginUser("user1", "password1");
-        facade.claimGiftCard(token, "1111222233334444");
+    public void test08GetGiftCardBalance() {
+        String token = loginUser(USER_ZOE);
+        facade.claimGiftCard(token, CARD_1);
+        int balance = facade.getGiftCardBalance(token, CARD_1);
+        assertEquals(CARD_1_BALANCE, balance);
+    }
 
-        // Initially no charges
-        List<Charge> charges = facade.getGiftCardCharges(token, "1111222233334444");
+    @Test
+    public void test09GetBalanceWithoutClaimedGiftcard() {
+        String token = loginUser(USER_MANUELITA);
+        assertThrowsWithMessage(() -> facade.getGiftCardBalance(token, CARD_2), GiftCardNotFoundErrorDescription);
+    }
+
+    @Test
+    public void test10GetGiftCardCharges() {
+        String token = loginUser(USER_ZOE);
+        facade.claimGiftCard(token, CARD_1);
+
+        List<Charge> charges = facade.getGiftCardCharges(token, CARD_1);
         assertTrue(charges.isEmpty());
 
-        // Add a charge and check again
-        facade.merchantChargeToCard("merchant1", "1111222233334444", 100, "Coffee purchase");
-        charges = facade.getGiftCardCharges(token, "1111222233334444");
+        int chargeAmount = 100;
+        String description = "Remera de Lando Norris";
+        facade.merchantChargeToCard(MERCHANT_1, CARD_1, chargeAmount, description);
 
+        charges = facade.getGiftCardCharges(token, CARD_1);
         assertEquals(1, charges.size());
-        assertEquals(100, charges.get(0).getAmount());
-        assertEquals("merchant1", charges.get(0).getMerchantKey());
+        assertChargeHasExpectedValues(charges.get(0), chargeAmount, MERCHANT_1, description);
     }
 
     @Test
-    public void testMerchantChargeToCard() {
-        String token = facade.loginUser("user1", "password1");
-        facade.claimGiftCard(token, "1111222233334444");
+    public void test11MerchantDoesChargeToCard() {
+        String token = loginUser(USER_MANUELITA);
+        facade.claimGiftCard(token, CARD_2);
 
-        facade.merchantChargeToCard("merchant1", "1111222233334444", 200, "Book purchase");
+        int chargeAmount = 200;
+        String description = "Jaylen Brown jersey";
+        facade.merchantChargeToCard(MERCHANT_1, CARD_2, chargeAmount, description);
 
-        GiftCard card = giftCards.get("1111222233334444");
-        assertEquals(800, card.getBalance());
+        GiftCard card = giftCards.get(CARD_2);
+        assertEquals(CARD_2_BALANCE - chargeAmount, card.getBalance());
         assertEquals(1, card.getCharges().size());
 
-        // Verify merchant API was called
-        assertTrue(testMerchantApi.wasCalled());
-        assertEquals("1111222233334444", testMerchantApi.getLastCardNumber());
-        assertEquals(200, testMerchantApi.getLastAmount());
+        assertMerchantApiWasCalledWith(CARD_2, chargeAmount);
     }
 
     @Test
-    public void testMerchantChargeWithInvalidMerchant() {
-        String token = facade.loginUser("user1", "password1");
-        facade.claimGiftCard(token, "1111222233334444");
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            facade.merchantChargeToCard("invalidMerchant", "1111222233334444", 100, "Purchase");
-        });
-
-        assertEquals(GiftCardSystemFacade.InvalidMerchantKeyErrorDescription, exception.getMessage());
+    public void test12MerchantChargeFailsWithInvalidMerchantKey() {
+        String token = loginUser(USER_MANUELITA);
+        facade.claimGiftCard(token, CARD_2);
+        assertThrowsWithMessage(() -> facade.merchantChargeToCard(INVALID_MERCHANT, CARD_2, 100, "Gorra Fernando Alonso"), GiftCardSystemFacade.InvalidMerchantKeyErrorDescription);
     }
 
     @Test
-    public void testGetUserClaimedCards() {
-        String token = facade.loginUser("user1", "password1");
+    public void test13ChargeToNonExistentGiftcard() {
+        assertThrowsWithMessage(() -> facade.merchantChargeToCard(MERCHANT_1, INVALID_CARD, 100, "Giftcard Invalida"), GiftCardNotFoundErrorDescription);
+    }
 
-        // Initially no claimed cards
+    @Test
+    public void test14ChargeMoreThanCurrentBalance() {
+        String token = loginUser(USER_ZOE);
+        facade.claimGiftCard(token, CARD_1);
+        assertThrows(RuntimeException.class, () -> {facade.merchantChargeToCard(MERCHANT_1, CARD_1, CARD_1_BALANCE + 500, "Otra remera de Lando Norris");});
+    }
+
+    @Test
+    public void test15MultipleChargesReduceGiftcardBalance() {
+        String token = loginUser(USER_ZOE);
+        facade.claimGiftCard(token, CARD_1);
+
+        int charge1 = 200;
+        int charge2 = 300;
+        facade.merchantChargeToCard(MERCHANT_1, CARD_1, charge1, "Gorra de Franco Colapinto");
+        facade.merchantChargeToCard(MERCHANT_2, CARD_1, charge2, "Jimmy Butler Jersey");
+
+        int balance = facade.getGiftCardBalance(token, CARD_1);
+        assertEquals(CARD_1_BALANCE - charge1 - charge2, balance);
+
+        List<Charge> charges = facade.getGiftCardCharges(token, CARD_1);
+        assertEquals(2, charges.size());
+    }
+
+    @Test
+    public void test16GetUserClaimedGiftcards() {
+        String token = loginUser(USER_ZOE);
+
         List<String> claimedCards = facade.getUserClaimedCards(token);
         assertTrue(claimedCards.isEmpty());
 
-        // Claim one card
-        facade.claimGiftCard(token, "1111222233334444");
+        facade.claimGiftCard(token, CARD_1);
         claimedCards = facade.getUserClaimedCards(token);
-
         assertEquals(1, claimedCards.size());
-        assertTrue(claimedCards.contains("1111222233334444"));
+        assertTrue(claimedCards.contains(CARD_1));
 
-        // Claim another card
-        facade.claimGiftCard(token, "5555666677778888");
+        facade.claimGiftCard(token, CARD_2);
         claimedCards = facade.getUserClaimedCards(token);
-
         assertEquals(2, claimedCards.size());
-        assertTrue(claimedCards.contains("1111222233334444"));
-        assertTrue(claimedCards.contains("5555666677778888"));
+        assertTrue(claimedCards.contains(CARD_1));
+        assertTrue(claimedCards.contains(CARD_2));
     }
 
     @Test
-    public void testTokenExpiration() {
-        String token = facade.loginUser("user1", "password1");
-
-        // Token should work initially
-        facade.claimGiftCard(token, "1111222233334444");
-
-        // Advance time by 6 minutes
+    public void test17TokenExpiration() {
+        String token = loginUser(USER_MANUELITA);
+        facade.claimGiftCard(token, CARD_2);
         testClock.advanceMinutes(6);
-
-        // Token should be expired now
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            facade.getGiftCardBalance(token, "1111222233334444");
-        });
-
-        assertEquals(GiftCardSystemFacade.TokenExpiredErrorDescription, exception.getMessage());
+        assertThrowsWithMessage(() -> facade.getGiftCardBalance(token, CARD_2), GiftCardSystemFacade.TokenExpiredErrorDescription);
     }
 
     @Test
-    public void testMultipleUsersCannotAccessEachOthersCards() {
-        String token1 = facade.loginUser("user1", "password1");
-        String token2 = facade.loginUser("user2", "password2");
+    public void test18SameUserWithMultipleSessions() {
+        String token1 = loginUser(USER_ZOE);
+        String token2 = loginUser(USER_ZOE);
 
-        facade.claimGiftCard(token1, "1111222233334444");
+        facade.claimGiftCard(token1, CARD_1);
+        facade.claimGiftCard(token2, CARD_2);
 
-        // user2 should not be able to access user1's card
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            facade.getGiftCardBalance(token2, "1111222233334444");
-        });
+        List<String> cards1 = facade.getUserClaimedCards(token1);
+        List<String> cards2 = facade.getUserClaimedCards(token2);
 
-        assertTrue(exception.getMessage().contains("Gift card not found or not claimed by user"));
+        assertEquals(2, cards1.size());
+        assertEquals(2, cards2.size());
+        assertCardsContainBoth(cards1);
+        assertCardsContainBoth(cards2);
     }
 
-    // Helper classes for testing
+    @Test
+    public void test19RegisterAlreadyExistingUser() {
+        assertThrowsWithMessage(() -> facade.registerUser(USER_ZOE, "differentPassword"), "User already exists");
+    }
+
+    private void setupValidUsers() {
+        validUsers = new HashMap<>();
+        validUsers.put(USER_MANUELITA, PASSWORD_MANUELITA);
+        validUsers.put(USER_ZOE, PASSWORD_ZOE);
+    }
+
+    private void setupGiftCards() {
+        giftCards = new HashMap<>();
+        GiftCard card1 = GiftCard.numberedWithBalance(CARD_1, CARD_1_BALANCE);
+        GiftCard card2 = GiftCard.numberedWithBalance(CARD_2, CARD_2_BALANCE);
+        giftCards.put(CARD_1, card1);
+        giftCards.put(CARD_2, card2);
+    }
+
+    private void setupValidMerchants() {
+        validMerchantKeys = new HashMap<>();
+        validMerchantKeys.put(MERCHANT_1, "F1 store");
+        validMerchantKeys.put(MERCHANT_2, "NBA store");
+    }
+
+    private void setupTestDependencies() {
+        testMerchantApi = new TestMerchantApi();
+        testClock = new TestClock();
+    }
+
+    private String loginUser(String username) {
+        String password = username.equals(USER_MANUELITA) ? PASSWORD_MANUELITA : PASSWORD_ZOE;
+        return facade.loginUser(username, password);
+    }
+
+    private void assertThrowsWithMessage(Runnable action, String expectedMessage) {
+        RuntimeException exception = assertThrows(RuntimeException.class, action::run);
+        assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    private void assertChargeHasExpectedValues(Charge charge, int expectedAmount, String expectedMerchant, String expectedDescription) {
+        assertAll("charge properties",
+                () -> assertEquals(expectedAmount, charge.getAmount()),
+                () -> assertEquals(expectedMerchant, charge.getMerchantKey()),
+                () -> assertEquals(expectedDescription, charge.getDescription())
+        );
+    }
+
+    private void assertMerchantApiWasCalledWith(String expectedCard, int expectedAmount) {
+        assertTrue(testMerchantApi.wasCalled());
+        assertEquals(expectedCard, testMerchantApi.getLastCardNumber());
+        assertEquals(expectedAmount, testMerchantApi.getLastAmount());
+    }
+
+    private void assertCardsContainBoth(List<String> cards) {
+        assertTrue(cards.contains(CARD_1));
+        assertTrue(cards.contains(CARD_2));
+    }
+
     private static class TestMerchantApi extends MerchantApi {
         private boolean called = false;
         private String lastCardNumber;
@@ -245,8 +304,6 @@ public class GiftCardSystemFacadeTest {
         public boolean wasCalled() { return called; }
         public String getLastCardNumber() { return lastCardNumber; }
         public int getLastAmount() { return lastAmount; }
-        public String getLastMerchantKey() { return lastMerchantKey; }
-        public String getLastDescription() { return lastDescription; }
     }
 
     private static class TestClock extends Clock {

@@ -2,149 +2,210 @@ package com.example.giftcardsystem;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+
+import static com.example.giftcardsystem.GiftCardSystemFacade.GiftCardNotFoundErrorDescription;
+import static com.example.giftcardsystem.UserSession.SessionExpired;
 import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserSessionTest {
-
     private UserSession userSession;
     private TestClock testClock;
     private Map<String, GiftCard> giftCards;
     private GiftCard testCard;
 
+    private static final String USER_EMILIO = "Emilio";
+    private static final String TOKEN_EMILIO = "tokenEmilio";
+    private static final String CARD_NUMBER = "1234567891";
+    private static final String INVALID_CARD = "9876543219";
+    private static final int CARD_BALANCE = 500;
+    private static final String MERCHANT_1 = "merchant1";
+    private static final String CHARGE_DESCRIPTION = "Remera de Daniel Ricciardo";
+    private static final int SESSION_TIMEOUT_MINUTES = 5;
+
     @BeforeEach
     public void setUp() {
-        testClock = new TestClock();
-        userSession = new UserSession("testUser", "token123", testClock);
-
-        // Setup test gift cards
-        giftCards = new HashMap<>();
-        testCard = GiftCard.numberedWithBalance("1111222233334444", 500);
-        giftCards.put("1111222233334444", testCard);
+        setupTestDependencies();
+        setupGiftCards();
+        userSession = new UserSession(USER_EMILIO, TOKEN_EMILIO, testClock);
     }
 
     @Test
-    public void testUserSessionCreation() {
-        assertEquals("testUser", userSession.getUser());
-        assertEquals("token123", userSession.getToken());
+    public void test01UserSessionCreation() {
+        assertEquals(USER_EMILIO, userSession.getUser());
+        assertEquals(TOKEN_EMILIO, userSession.getToken());
         assertTrue(userSession.isActive());
     }
 
     @Test
-    public void testSessionIsActiveWithinFiveMinutes() {
-        // Advance time by 4 minutes
-        testClock.advanceMinutes(4);
-
+    public void test02SessionIsActiveWithinTimeout() {
+        testClock.advanceMinutes(SESSION_TIMEOUT_MINUTES - 1);
         assertTrue(userSession.isActive());
     }
 
     @Test
-    public void testSessionExpiresAfterFiveMinutes() {
-        // Advance time by 6 minutes
-        testClock.advanceMinutes(6);
-
+    public void test03SessionExpiresAfterTimeout() {
+        testClock.advanceMinutes(SESSION_TIMEOUT_MINUTES + 1);
         assertFalse(userSession.isActive());
     }
 
     @Test
-    public void testSessionExpiresExactlyAtFiveMinutes() {
-        // Advance time by exactly 5 minutes
-        testClock.advanceMinutes(5);
-
+    public void test04SessionExpiresExactlyAtTimeout() {
+        testClock.advanceMinutes(SESSION_TIMEOUT_MINUTES);
         assertFalse(userSession.isActive());
     }
 
     @Test
-    public void testUpdateLastAccessExtendsSession() {
-        // Advance time by 3 minutes
+    public void test05UpdateLastAccessExtendsSession() {
         testClock.advanceMinutes(3);
         assertTrue(userSession.isActive());
 
-        // Update access time
         userSession.updateLastAccess();
 
-        // Advance another 3 minutes (6 total, but 3 since last access)
         testClock.advanceMinutes(3);
         assertTrue(userSession.isActive());
 
-        // Now advance 3 more minutes (should expire)
         testClock.advanceMinutes(3);
         assertFalse(userSession.isActive());
     }
 
     @Test
-    public void testClaimGiftCardUpdatesAccess() {
-        // Advance time by 3 minutes
+    public void test06ClaimGiftCardUpdatesAccess() {
         testClock.advanceMinutes(3);
 
-        // Claim gift card - this should update last access
-        userSession.claimGiftCard("1111222233334444", giftCards);
+        userSession.claimGiftCard(CARD_NUMBER, giftCards);
 
         assertTrue(testCard.isClaimed());
-        assertTrue(testCard.isClaimedBy("testUser"));
+        assertTrue(testCard.isClaimedBy(USER_EMILIO));
 
-        // Advance another 4 minutes (7 total, but 4 since claim)
         testClock.advanceMinutes(4);
         assertTrue(userSession.isActive());
     }
 
     @Test
-    public void testGetGiftCardBalanceUpdatesAccess() {
-        // First claim the card
-        testCard.claimBy("testUser");
-
-        // Advance time by 3 minutes
+    public void test07GetGiftCardBalanceUpdatesAccess() {
+        testCard.claimBy(USER_EMILIO);
         testClock.advanceMinutes(3);
 
-        // Get balance - this should update last access
-        int balance = userSession.getGiftCardBalance("1111222233334444", giftCards);
-        assertEquals(500, balance);
+        int balance = userSession.getGiftCardBalance(CARD_NUMBER, giftCards);
 
-        // Advance another 4 minutes (7 total, but 4 since balance check)
+        assertEquals(CARD_BALANCE, balance);
         testClock.advanceMinutes(4);
         assertTrue(userSession.isActive());
     }
 
     @Test
-    public void testGetGiftCardChargesUpdatesAccess() {
-        // First claim the card and add a charge
-        testCard.claimBy("testUser");
-        testCard.chargeAmount(100, "merchant1", "Test purchase");
-
-        // Advance time by 3 minutes
+    public void test08GetGiftCardChargesUpdatesAccess() {
+        testCard.claimBy(USER_EMILIO);
+        testCard.chargeAmount(100, MERCHANT_1, CHARGE_DESCRIPTION);
         testClock.advanceMinutes(3);
 
-        // Get charges - this should update last access
-        var charges = userSession.getGiftCardCharges("1111222233334444", giftCards);
+        var charges = userSession.getGiftCardCharges(CARD_NUMBER, giftCards);
+
         assertEquals(1, charges.size());
-
-        // Advance another 4 minutes (7 total, but 4 since charges check)
         testClock.advanceMinutes(4);
         assertTrue(userSession.isActive());
     }
 
     @Test
-    public void testCannotAccessCardNotClaimedByUser() {
-        // Don't claim the card, try to access balance
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userSession.getGiftCardBalance("1111222233334444", giftCards);
-        });
-
-        assertEquals("Gift card not found or not claimed by user", exception.getMessage());
+    public void test09CannotAccessCardNotClaimedByUser() {
+        assertThrowsWithMessage(() -> userSession.getGiftCardBalance(CARD_NUMBER, giftCards), GiftCardNotFoundErrorDescription);
     }
 
     @Test
-    public void testCannotAccessNonExistentCard() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userSession.getGiftCardBalance("9999888877776666", giftCards);
-        });
-
-        assertEquals("Gift card not found or not claimed by user", exception.getMessage());
+    public void test10CannotAccessNonExistentCard() {
+        assertThrowsWithMessage(() -> userSession.getGiftCardBalance(INVALID_CARD, giftCards), GiftCardNotFoundErrorDescription);
     }
 
-    // Helper class for testing time-dependent functionality
+    @Test
+    public void test11SessionCreationWithInvalidUser() {
+        assertThrowsWithMessage(() -> new UserSession(null, TOKEN_EMILIO, testClock), UserSession.InvalidUserErrorDescription);
+        assertThrowsWithMessage(() -> new UserSession("", TOKEN_EMILIO, testClock), UserSession.InvalidUserErrorDescription);
+        assertThrowsWithMessage(() -> new UserSession("   ", TOKEN_EMILIO, testClock), UserSession.InvalidUserErrorDescription);
+    }
+
+    @Test
+    public void test12SessionCreationWithInvalidToken() {
+        assertThrowsWithMessage(() -> new UserSession(USER_EMILIO, null, testClock), UserSession.InvalidTokenErrorDescription);
+        assertThrowsWithMessage(() -> new UserSession(USER_EMILIO, "", testClock), UserSession.InvalidTokenErrorDescription);
+        assertThrowsWithMessage(() -> new UserSession(USER_EMILIO, "   ", testClock), UserSession.InvalidTokenErrorDescription);
+    }
+
+    @Test
+    public void test13SessionCreationWithNullClock() {
+        assertThrowsWithMessage(() -> new UserSession(USER_EMILIO, TOKEN_EMILIO, null), UserSession.InvalidClockErrorDescription);
+    }
+
+    @Test
+    public void test14MultipleUpdateLastAccessCalls() {
+        testClock.advanceMinutes(2);
+        userSession.updateLastAccess();
+
+        testClock.advanceMinutes(2);
+        userSession.updateLastAccess();
+
+        testClock.advanceMinutes(2);
+        userSession.updateLastAccess();
+
+        testClock.advanceMinutes(4);
+        assertTrue(userSession.isActive());
+
+        testClock.advanceMinutes(2);
+        assertFalse(userSession.isActive());
+    }
+
+    @Test
+    public void test15OperationsFailAfterExpiration() {
+        testCard.claimBy(USER_EMILIO);
+        testClock.advanceMinutes(SESSION_TIMEOUT_MINUTES + 1);
+        assertFalse(userSession.isActive());
+
+        assertThrowsWithMessage(() -> userSession.claimGiftCard(CARD_NUMBER, giftCards), SessionExpired);
+        assertThrowsWithMessage(() -> userSession.getGiftCardBalance(CARD_NUMBER, giftCards), SessionExpired);
+        assertThrowsWithMessage(() -> userSession.getGiftCardCharges(CARD_NUMBER, giftCards), SessionExpired);
+    }
+
+    @Test
+    public void test16UpdateLastAccessAfterSessionExpired() {
+        testClock.advanceMinutes(SESSION_TIMEOUT_MINUTES + 1);
+        assertFalse(userSession.isActive());
+
+        userSession.updateLastAccess();
+        assertFalse(userSession.isActive());
+    }
+
+    @Test
+    public void test17ConcurrentSessionActivity() {
+        testClock.advanceMinutes(2);
+        userSession.claimGiftCard(CARD_NUMBER, giftCards);
+
+        testClock.advanceMinutes(2);
+        int balance = userSession.getGiftCardBalance(CARD_NUMBER, giftCards);
+
+        testClock.advanceMinutes(2);
+        var charges = userSession.getGiftCardCharges(CARD_NUMBER, giftCards);
+
+        testClock.advanceMinutes(4);
+        assertTrue(userSession.isActive());
+    }
+
+    private void setupTestDependencies() {
+        testClock = new TestClock();
+    }
+
+    private void setupGiftCards() {
+        giftCards = new HashMap<>();
+        testCard = GiftCard.numberedWithBalance(CARD_NUMBER, CARD_BALANCE);
+        giftCards.put(CARD_NUMBER, testCard);
+    }
+
+    private void assertThrowsWithMessage(Runnable action, String expectedMessage) {
+        RuntimeException exception = assertThrows(RuntimeException.class, action::run);
+        assertEquals(expectedMessage, exception.getMessage());
+    }
+
     private static class TestClock extends Clock {
         private LocalDateTime currentTime = LocalDateTime.now();
 
