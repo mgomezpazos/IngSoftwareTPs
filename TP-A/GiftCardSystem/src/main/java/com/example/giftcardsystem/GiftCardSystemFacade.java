@@ -1,10 +1,18 @@
 package com.example.giftcardsystem;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import java.util.HashMap;
+import java.util.Map;
 
+@Service
 public class GiftCardSystemFacade {
     public static final String InvalidUserAndOrPasswordErrorDescription = "Invalid user and/or password";
     public static final String InvalidTokenErrorDescription = "Invalid or expired token";
@@ -20,6 +28,7 @@ public class GiftCardSystemFacade {
     private final Clock clock;
     private final Map<String, UserSession> activeSessions;
 
+    @Autowired
     public GiftCardSystemFacade(Map<String, String> validUsers, Map<String, GiftCard> giftCards, Map<String, String> validMerchantKeys,
                                 MerchantApi merchantApi, Clock clock) {
         this.validUsers = validUsers;
