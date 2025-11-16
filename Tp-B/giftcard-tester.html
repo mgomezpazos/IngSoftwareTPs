@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Card System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+            background: linear-gradient(135deg, #b794f6 0%, #d4b3ff 50%, #e2c5ff 100%);
+            min-height: 100vh;
+            color: #2d3748;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            background-image:
+                    radial-gradient(circle at 20% 20%, #fff 3px, transparent 3px),
+                    radial-gradient(circle at 60% 40%, #fff 2px, transparent 2px),
+                    radial-gradient(circle at 80% 80%, #fff 3px, transparent 3px);
+            background-size: 80px 80px, 60px 60px, 100px 100px;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #dbeafe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            display: inline-block;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            margin-top: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @keyframes titleGlow {
+            0% {
+                text-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 0 20px rgba(255,255,255,0.1);
+            }
+            100% {
+                text-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 0 30px rgba(255,255,255,0.2);
+            }
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow:
+                    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow:
+                    0 32px 64px -12px rgba(0, 0, 0, 0.15),
+                    0 25px 50px -12px rgba(102, 126, 234, 0.4);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .gift-card-display {
+            width: 100%;
+            height: 320px;
+            background: #fff5d6;
+            border: 12px solid #fff;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            transform: rotate(-2deg);
+            transition: transform 0.3s ease;
+        }
+
+        .gift-card-display:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        .gift-card-border {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            height: 25px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            font-size: 1rem;
+            z-index: 10;
+        }
+
+        .gift-card-main {
+            position: absolute;
+            top: 60px;
+            left: 15px;
+            right: 15px;
+            bottom: 40px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gift-card-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 2px, transparent 2px),
+                    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 3px, transparent 3px);
+            background-size: 40px 40px, 60px 60px;
+        }
+
+        .gift-card-store {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #ffd93d;
+            color: #d63031;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transform: rotate(-8deg);
+            border: 3px solid #fff;
+            z-index: 15;
+        }
+
+        .gift-card-content {
+            position: relative;
+            z-index: 12;
+            text-align: center;
+            color: white;
+        }
+
+        .gift-card-amount {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: #ffd93d;
+            text-shadow:
+                    3px 3px 0px #d63031,
+                    6px 6px 0px rgba(0,0,0,0.3);
+            letter-spacing: -3px;
+            transition: opacity 0.3s ease;
+        }
+
+        .gift-card-label {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-shadow: 2px 2px 0px #d63031;
+        }
+
+        .gift-card-smiley {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: #ffd93d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 4px solid #fff;
+            z-index: 15;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .gift-card-bottom-pattern {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            height: 20px;
+            background: repeating-linear-gradient(
+                    45deg,
+                    #ff6b6b,
+                    #ff6b6b 8px,
+                    #4ecdc4 8px,
+                    #4ecdc4 16px,
+                    #45b7d1 16px,
+                    #45b7d1 24px
+            );
+            border-radius: 10px;
+            z-index: 10;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+            60% { transform: translateY(-4px); }
+        }
+
+        .card h2 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #ffffff;
+            color: #2d3748;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 12px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            white-space: pre-wrap;
+            font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            max-height: 200px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .token-display {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            border: 1px solid #bae6fd;
+            word-break: break-all;
+            font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-color: #bbf7d0;
+            color: #166534;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            border-color: #fecaca;
+            color: #dc2626;
+        }
+
+        .compact-card {
+            padding: 2rem;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .info-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .gift-card-display {
+                height: 200px;
+            }
+
+            .gift-card-amount {
+                font-size: 2.5rem;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="background-pattern"></div>
+
+<div class="container">
+    <div class="header">
+        <h1>🎁 Gift Card System</h1>
+        <p>Gestiona tus tarjetas de regalo digitales</p>
+    </div>
+
+    <div class="main-content">
+        <div class="left-panel">
+            <!-- Featured Gift Card Display -->
+            <div class="card">
+                <div class="gift-card-display">
+                    <div class="gift-card-border">
+                        <span>❤️</span><span>😊</span><span>🛍️</span><span>❤️</span><span>😊</span><span>🔒</span><span>❤️</span><span>😊</span><span>🛍️</span><span>❤️</span>
+                    </div>
+
+                    <div class="gift-card-main">
+                        <div class="gift-card-pattern"></div>
+                        <div class="gift-card-store">GIFT CARD</div>
+
+                        <div class="gift-card-content">
+                            <div class="gift-card-amount" id="displayAmount">$1000</div>
+                            <div class="gift-card-label">BALANCE</div>
+                        </div>
+
+                        <div class="gift-card-smiley">😊</div>
+                    </div>
+
+                    <div class="gift-card-bottom-pattern"></div>
+                </div>
+
+                <h2>
+                    <div class="icon">🎁</div>
+                    Tarjetas Disponibles
+                </h2>
+                <div class="info-badge">
+                    💡 Datos de prueba: alice/1234, bob/abcd | Tarjetas: card01 ($1000), card02 ($500)
+                </div>
+                <div class="two-column">
+                    <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #667eea;">card01</div>
+                        <div style="font-size: 0.85rem; color: #64748b;">$1000</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                        <div style="font-weight: 600; color: #667eea;">card02</div>
+                        <div style="font-size: 0.85rem; color: #64748b;">$500</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login Card -->
+            <div class="card compact-card">
+                <h2>
+                    <div class="icon">🔐</div>
+                    Login
+                </h2>
+                <div class="input-group">
+                    <label for="loginUser">Usuario</label>
+                    <input type="text" id="loginUser" placeholder="Ingresa tu usuario" value="alice">
+                </div>
+                <div class="input-group">
+                    <label for="loginPassword">Contraseña</label>
+                    <input type="password" id="loginPassword" placeholder="Ingresa tu contraseña" value="1234">
+                </div>
+                <button class="btn" onclick="login()">Iniciar Sesión</button>
+                <div id="tokenDisplay" class="token-display" style="display: none;">
+                    <strong>🎫 Token de Acceso:</strong>
+                    <div id="tokenValue" style="margin-top: 0.5rem; opacity: 0.8;"></div>
+                </div>
+                <div id="loginResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- Redeem Card -->
+            <div class="card compact-card">
+                <h2>
+                    <div class="icon">✨</div>
+                    Redimir Tarjeta
+                </h2>
+                <div class="info-badge">
+                    ⚠️ Primero debes redimir una tarjeta para poder usarla
+                </div>
+                <div class="input-group">
+                    <label for="redeemCard">ID de Tarjeta</label>
+                    <input type="text" id="redeemCard" placeholder="card01" value="card01">
+                </div>
+                <button class="btn" onclick="redeemCard()">Redimir Tarjeta</button>
+                <div id="redeemResult" class="result" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <!-- Check Balance -->
+            <div class="card compact-card">
+                <h2>
+                    <div class="icon">💰</div>
+                    Consultar Balance
+                </h2>
+                <div class="input-group">
+                    <label for="balanceCard">ID de Tarjeta</label>
+                    <input type="text" id="balanceCard" placeholder="card01" value="card01">
+                </div>
+                <button class="btn" onclick="checkBalance()">Ver Balance</button>
+                <div id="balanceResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- View Details -->
+            <div class="card compact-card">
+                <h2>
+                    <div class="icon">📋</div>
+                    Historial de Cargos
+                </h2>
+                <div class="input-group">
+                    <label for="detailsCard">ID de Tarjeta</label>
+                    <input type="text" id="detailsCard" placeholder="card01" value="card01">
+                </div>
+                <button class="btn" onclick="viewDetails()">Ver Historial</button>
+                <div id="detailsResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- Merchant Charge -->
+            <div class="card compact-card">
+                <h2>
+                    <div class="icon">🛒</div>
+                    Realizar Cargo
+                </h2>
+                <div class="input-group">
+                    <label for="chargeMerchant">Comercio</label>
+                    <select id="chargeMerchant">
+                        <option value="">Selecciona un comercio...</option>
+                        <option value="AMAZON">AMAZON</option>
+                        <option value="SHOP">SHOP</option>
+                    </select>
+                </div>
+                <div class="two-column">
+                    <div class="input-group">
+                        <label for="chargeCard">ID de Tarjeta</label>
+                        <input type="text" id="chargeCard" placeholder="card01" value="card01">
+                    </div>
+                    <div class="input-group">
+                        <label for="amount">Monto</label>
+                        <input type="number" id="amount" placeholder="100" min="1" value="100">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="description">Descripción</label>
+                    <input type="text" id="description" placeholder="Compra de prueba" value="Compra de prueba">
+                </div>
+                <button class="btn" onclick="merchantCharge()">Procesar Cargo</button>
+                <div id="chargeResult" class="result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE = 'http://localhost:8080/api/giftcards';
+    let currentToken = '';
+
+    function showResult(elementId, data, isError = false) {
+        const element = document.getElementById(elementId);
+        element.style.display = 'block';
+        element.className = `result ${isError ? 'error' : 'success'}`;
+        element.textContent = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
+    }
+
+    async function login() {
+        const user = document.getElementById('loginUser').value;
+        const password = document.getElementById('loginPassword').value;
+
+        if (!user || !password) {
+            showResult('loginResult', { error: 'Por favor ingresa usuario y contraseña' }, true);
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/login?user=${user}&pass=${password}`, {
+                method: 'POST'
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.token) {
+                currentToken = data.token;
+                document.getElementById('tokenDisplay').style.display = 'block';
+                document.getElementById('tokenValue').textContent = data.token;
+                showResult('loginResult', { message: '✅ Login exitoso!', token: data.token });
+            } else {
+                showResult('loginResult', data, true);
+            }
+        } catch (error) {
+            showResult('loginResult', { error: 'Error de conexión: ' + error.message }, true);
+        }
+    }
+
+    async function redeemCard() {
+        const cardId = document.getElementById('redeemCard').value;
+
+        if (!currentToken) {
+            showResult('redeemResult', { error: 'Por favor inicia sesión primero' }, true);
+            return;
+        }
+
+        if (!cardId) {
+            showResult('redeemResult', { error: 'Por favor ingresa el ID de la tarjeta' }, true);
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/${cardId}/redeem`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${currentToken}`
+                }
+            });
+
+            if (response.ok) {
+                const text = await response.text();
+                showResult('redeemResult', { message: '✅ Tarjeta redimida correctamente!' });
+            } else {
+                const data = await response.json();
+                showResult('redeemResult', data, true);
+            }
+        } catch (error) {
+            showResult('redeemResult', { error: 'Error: ' + error.message }, true);
+        }
+    }
+
+    async function checkBalance() {
+        const cardId = document.getElementById('balanceCard').value;
+
+        if (!currentToken) {
+            showResult('balanceResult', { error: 'Por favor inicia sesión primero' }, true);
+            return;
+        }
+
+        if (!cardId) {
+            showResult('balanceResult', { error: 'Por favor ingresa el ID de la tarjeta' }, true);
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/${cardId}/balance`, {
+                headers: {
+                    'Authorization': `Bearer ${currentToken}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showResult('balanceResult', data);
+                document.getElementById('displayAmount').textContent = '$' + data.balance;
+            } else {
+                showResult('balanceResult', data, true);
+            }
+        } catch (error) {
+            showResult('balanceResult', { error: 'Error: ' + error.message }, true);
+        }
+    }
+
+    async function viewDetails() {
+        const cardId = document.getElementById('detailsCard').value;
+
+        if (!currentToken) {
+            showResult('detailsResult', { error: 'Por favor inicia sesión primero' }, true);
+            return;
+        }
+
+        if (!cardId) {
+            showResult('detailsResult', { error: 'Por favor ingresa el ID de la tarjeta' }, true);
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/${cardId}/details`, {
+                headers: {
+                    'Authorization': `Bearer ${currentToken}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                showResult('detailsResult', data);
+            } else {
+                showResult('detailsResult', data, true);
+            }
+        } catch (error) {
+            showResult('detailsResult', { error: 'Error: ' + error.message }, true);
+        }
+    }
+
+    async function merchantCharge() {
+        const merchant = document.getElementById('chargeMerchant').value;
+        const cardId = document.getElementById('chargeCard').value;
+        const amount = document.getElementById('amount').value;
+        const description = document.getElementById('description').value;
+
+        if (!merchant || !cardId || !amount || !description) {
+            showResult('chargeResult', { error: 'Por favor completa todos los campos' }, true);
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `${API_BASE}/${cardId}/charge?merchant=${merchant}&amount=${amount}&description=${encodeURIComponent(description)}`,
+                { method: 'POST' }
+            );
+
+            if (response.ok) {
+                const text = await response.text();
+                showResult('chargeResult', { message: '✅ Cargo realizado correctamente!' });
+            } else {
+                const data = await response.json();
+                showResult('chargeResult', data, true);
+            }
+        } catch (error) {
+            showResult('chargeResult', { error: 'Error: ' + error.message }, true);
+        }
+    }
+
+    // Animate display amount on load
+    window.addEventListener('load', () => {
+        const amounts = ['$1000', '$500', '$750', '$250'];
+        let currentIndex = 0;
+        const displayElement = document.getElementById('displayAmount');
+
+        setInterval(() => {
+            displayElement.style.opacity = '0';
+            setTimeout(() => {
+                displayElement.textContent = amounts[currentIndex];
+                displayElement.style.opacity = '1';
+                currentIndex = (currentIndex + 1) % amounts.length;
+            }, 300);
+        }, 3000);
+    });
+</script>
+</body>
+</html>
