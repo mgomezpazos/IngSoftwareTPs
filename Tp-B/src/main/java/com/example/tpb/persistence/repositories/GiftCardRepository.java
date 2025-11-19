@@ -1,7 +1,6 @@
 package com.example.tpb.persistence.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import com.example.tpb.persistence.entities.GiftCardEntity;
 
-public interface GiftCardRepository extends JpaRepository<GiftCardEntity, String> {}
-
+public interface GiftCardRepository extends CrudRepository<GiftCardEntity, String> {}

@@ -6,6 +6,8 @@ import java.util.List;
 public class GiftCard {
     public static final String CargoImposible = "CargoImposible";
     public static final String InvalidCard = "InvalidCard";
+    public static final String CardAlreadyRedeemed = "CardAlreadyRedeemed";
+
     private String id;
     private int balance;
     private String owner;
@@ -13,11 +15,18 @@ public class GiftCard {
 
     public GiftCard( String id, int initialBalance ) {
         this.id = id;
-        balance = initialBalance;
+        this.balance = initialBalance;
+    }
+
+    public GiftCard( String id, int balance, String owner, List<String> charges ) {
+        this.id = id;
+        this.balance = balance;
+        this.owner = owner;
+        this.charges = new ArrayList<>( charges );
     }
 
     public GiftCard charge( int anAmount, String description ) {
-        if ( !owned() || ( balance - anAmount < 0 ) ) throw new RuntimeException( CargoImposible );
+        assertCanCharge( anAmount );
 
         balance = balance - anAmount;
         charges.add( description );
@@ -25,20 +34,38 @@ public class GiftCard {
         return this;
     }
 
+    private void assertCanCharge( int anAmount ) {
+        if ( !owned() || ( balance - anAmount < 0 ) ) throw new RuntimeException( CargoImposible );
+    }
+
     public GiftCard redeem( String newOwner ) {
-        if ( owned() ) throw new RuntimeException( InvalidCard );
+        assertCanRedeem( newOwner );
 
         owner = newOwner;
         return this;
     }
 
-    // proyectors
-    public boolean owned() {                            return owner != null;                   }
-    public boolean isOwnedBy( String aPossibleOwner ) { return owner.equals( aPossibleOwner );  }
+    private void assertCanRedeem( String newOwner ) {
+        if ( owned() ) {
+            if ( isOwnedBy( newOwner ) ) {
+                throw new RuntimeException( CardAlreadyRedeemed );
+            } else {
+                throw new RuntimeException( InvalidCard );
+            }
+        }
+    }
+
+    public void assertIsOwnedBy( String expectedOwner ) {
+        if ( !owned() || !owner.equals( expectedOwner ) ) throw new RuntimeException( InvalidCard );
+    }
+
+    // projectors
+    public boolean owned() {return owner != null;}
+    public boolean isOwnedBy( String aPossibleOwner ) { return owned() && owner.equals( aPossibleOwner );  }
 
     // accessors
-    public String id() {            return id;      }
-    public int balance() {          return balance; }
-    public List<String> charges() { return charges; }
-
+    public String id() {return id;}
+    public int balance() {return balance;}
+    public String owner() {return owner;}
+    public List<String> charges() {return new ArrayList<>( charges );}
 }

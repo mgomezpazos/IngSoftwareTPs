@@ -1,6 +1,6 @@
 package com.example.tpb.persistence.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import com.example.tpb.persistence.entities.UserEntity;
 
-public interface UserRepository extends JpaRepository<UserEntity, String> {}
+public interface UserRepository extends CrudRepository<UserEntity, String> {}

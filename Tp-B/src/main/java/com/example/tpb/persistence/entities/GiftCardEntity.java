@@ -1,11 +1,15 @@
 package com.example.tpb.persistence.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "giftcards")
+@Table( name = "giftcards" )
+@Getter @Setter
 public class GiftCardEntity {
 
     @Id
@@ -13,30 +17,17 @@ public class GiftCardEntity {
 
     private int balance;
 
-    private String owner; // null si no está redimida
+    private String owner;
 
-    @ElementCollection
-    @CollectionTable(name = "giftcard_charges", joinColumns = @JoinColumn(name = "card_id"))
-    @Column(name = "description")
+    @ElementCollection( fetch = FetchType.EAGER )
+    @CollectionTable( name = "giftcard_charges", joinColumns = @JoinColumn( name = "card_id" ) )
+    @Column( name = "description" )
     private List<String> charges = new ArrayList<>();
 
     public GiftCardEntity() {}
 
-    public GiftCardEntity(String id, int balance) {
+    public GiftCardEntity( String id, int balance ) {
         this.id = id;
         this.balance = balance;
     }
-
-    // getters / setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-
-    public int getBalance() { return balance; }
-    public void setBalance(int balance) { this.balance = balance; }
-
-    public String getOwner() { return owner; }
-    public void setOwner(String owner) { this.owner = owner; }
-
-    public List<String> getCharges() { return charges; }
-    public void setCharges(List<String> charges) { this.charges = charges; }
 }

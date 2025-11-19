@@ -3,17 +3,31 @@ package com.example.tpb.model;
 import java.time.LocalDateTime;
 
 public class UserSession {
-    String user;
-    LocalDateTime stamp;
+    public static final String SessionExpired = "InvalidToken";
+    private static final int SESSION_DURATION_MINUTES = 15;
 
-    public UserSession( String user, Clock clock ) {
+    private String user;
+    private LocalDateTime stamp;
+
+    public UserSession( String user, LocalDateTime stamp ) {
         this.user = user;
-        this.stamp = clock.now();
+        this.stamp = stamp;
     }
 
-    public String userAliveAt( Clock clock ) {
-        if (clock.now().isAfter( stamp.plusMinutes( 15 ) )) throw new RuntimeException( "InvalidToken" );
-
+    public String userAliveAt( LocalDateTime now ) {
+        assertIsActive( now );
         return user;
     }
+
+    public boolean isActiveAt( LocalDateTime now ) {
+        return now.isBefore( stamp.plusMinutes( SESSION_DURATION_MINUTES ) );
+    }
+
+    private void assertIsActive( LocalDateTime now ) {
+        if ( !isActiveAt( now ) ) throw new RuntimeException( SessionExpired );
+    }
+
+    // accessors
+    public String user() {          return user;  }
+    public LocalDateTime stamp() {  return stamp; }
 }

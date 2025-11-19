@@ -1,7 +1,6 @@
 package com.example.tpb.persistence.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import com.example.tpb.persistence.entities.MerchantEntity;
 
-public interface MerchantRepository extends JpaRepository<MerchantEntity, String> {}
-
+public interface MerchantRepository extends CrudRepository<MerchantEntity, String> {}
