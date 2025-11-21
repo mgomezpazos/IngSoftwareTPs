@@ -20,7 +20,9 @@ public class UserSession {
     }
 
     public boolean isActiveAt( LocalDateTime now ) {
-        return now.isBefore( stamp.plusMinutes( SESSION_DURATION_MINUTES ) );
+        boolean afterCreation = !now.isBefore( stamp );  // now >= stamp
+        boolean beforeExpiration = now.isBefore( stamp.plusMinutes( SESSION_DURATION_MINUTES ) );
+        return afterCreation && beforeExpiration;
     }
 
     private void assertIsActive( LocalDateTime now ) {

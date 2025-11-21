@@ -12,107 +12,93 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
-            background: linear-gradient(135deg, #b794f6 0%, #d4b3ff 50%, #e2c5ff 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
             min-height: 100vh;
-            color: #2d3748;
-            overflow-x: hidden;
-            position: relative;
+            line-height: 1.6;
         }
 
-        .background-pattern {
+        .nav {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.05;
-            background-image:
-                    radial-gradient(circle at 20% 20%, #fff 3px, transparent 3px),
-                    radial-gradient(circle at 60% 40%, #fff 2px, transparent 2px),
-                    radial-gradient(circle at 80% 80%, #fff 3px, transparent 3px);
-            background-size: 80px 80px, 60px 60px, 100px 100px;
-            z-index: 0;
+            right: 0;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            color: #953356;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
         }
 
         .container {
-            position: relative;
-            z-index: 1;
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 8rem 3rem 3rem;
         }
 
-        .header {
+        .hero {
             text-align: center;
-            margin-bottom: 3rem;
-            color: white;
-            position: relative;
+            margin-bottom: 6rem;
+            animation: fadeInUp 0.8s ease;
         }
 
-        .header h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.04em;
-            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #dbeafe 100%);
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -3px;
+            background: linear-gradient(135deg, #ffffff 0%, #953356 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            position: relative;
-            display: inline-block;
-            animation: titleGlow 3s ease-in-out infinite alternate;
         }
 
-        .header p {
+        .hero p {
             font-size: 1.2rem;
-            opacity: 0.95;
+            color: rgba(255, 255, 255, 0.5);
             font-weight: 400;
-            letter-spacing: 0.5px;
-            margin-top: 1rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        @keyframes titleGlow {
-            0% {
-                text-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 0 20px rgba(255,255,255,0.1);
-            }
-            100% {
-                text-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 0 30px rgba(255,255,255,0.2);
-            }
-        }
-
-        .main-content {
+        .grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .left-panel {
-            display: flex;
-            flex-direction: column;
+            grid-template-columns: repeat(2, 1fr);
             gap: 2rem;
-        }
-
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
+            margin-bottom: 3rem;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
             padding: 2.5rem;
-            box-shadow:
-                    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                    0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
@@ -123,188 +109,136 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            height: 2px;
+            background: #953356;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
         }
 
         .card:hover {
-            transform: translateY(-8px);
-            box-shadow:
-                    0 32px 64px -12px rgba(0, 0, 0, 0.15),
-                    0 25px 50px -12px rgba(102, 126, 234, 0.4);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(149, 51, 86, 0.3);
+            transform: translateY(-4px);
         }
 
         .card:hover::before {
-            opacity: 1;
+            transform: scaleX(1);
         }
 
-        .gift-card-display {
-            width: 100%;
-            height: 320px;
-            background: #fff5d6;
-            border: 12px solid #fff;
-            border-radius: 20px;
-            position: relative;
-            overflow: hidden;
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             margin-bottom: 2rem;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            transform: rotate(-2deg);
-            transition: transform 0.3s ease;
         }
 
-        .gift-card-display:hover {
-            transform: rotate(0deg) scale(1.02);
-        }
-
-        .gift-card-border {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            height: 25px;
-            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            font-size: 1rem;
-            z-index: 10;
-        }
-
-        .gift-card-main {
-            position: absolute;
-            top: 60px;
-            left: 15px;
-            right: 15px;
-            bottom: 40px;
-            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .gift-card-pattern {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image:
-                    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 2px, transparent 2px),
-                    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 3px, transparent 3px);
-            background-size: 40px 40px, 60px 60px;
-        }
-
-        .gift-card-store {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: #ffd93d;
-            color: #d63031;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 900;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            transform: rotate(-8deg);
-            border: 3px solid #fff;
-            z-index: 15;
-        }
-
-        .gift-card-content {
-            position: relative;
-            z-index: 12;
-            text-align: center;
-            color: white;
-        }
-
-        .gift-card-amount {
-            font-size: 4rem;
-            font-weight: 900;
-            margin-bottom: 0.5rem;
-            color: #ffd93d;
-            text-shadow:
-                    3px 3px 0px #d63031,
-                    6px 6px 0px rgba(0,0,0,0.3);
-            letter-spacing: -3px;
-            transition: opacity 0.3s ease;
-        }
-
-        .gift-card-label {
-            font-size: 1.4rem;
-            font-weight: 900;
-            letter-spacing: 4px;
-            color: #ffffff;
-            text-shadow: 2px 2px 0px #d63031;
-        }
-
-        .gift-card-smiley {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: #ffd93d;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            border: 4px solid #fff;
-            z-index: 15;
-            animation: bounce 2s ease-in-out infinite;
-        }
-
-        .gift-card-bottom-pattern {
-            position: absolute;
-            bottom: 15px;
-            left: 15px;
-            right: 15px;
-            height: 20px;
-            background: repeating-linear-gradient(
-                    45deg,
-                    #ff6b6b,
-                    #ff6b6b 8px,
-                    #4ecdc4 8px,
-                    #4ecdc4 16px,
-                    #45b7d1 16px,
-                    #45b7d1 24px
-            );
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(149, 51, 86, 0.1);
             border-radius: 10px;
-            z-index: 10;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-8px); }
-            60% { transform: translateY(-4px); }
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
         }
 
         .card h2 {
-            color: #2d3748;
             font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            letter-spacing: -0.5px;
         }
 
-        .icon {
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 8px;
+        .featured-card {
+            grid-column: 1 / -1;
+            background: rgba(149, 51, 86, 0.05);
+            border-color: rgba(149, 51, 86, 0.2);
+        }
+
+        .gift-card-visual {
+            width: 100%;
+            max-width: 400px;
+            height: 240px;
+            margin: 0 auto 2rem;
+            background: #1a1a1a;
+            border: 2px solid rgba(149, 51, 86, 0.3);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s ease;
+        }
+
+        .gift-card-visual:hover {
+            transform: scale(1.02);
+        }
+
+        .card-shine {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
+
+        .card-amount {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #7b002c;
+            letter-spacing: -2px;
+        }
+
+        .card-id {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.4);
+            font-family: 'Courier New', monospace;
+        }
+
+        .cards-display {
             display: flex;
-            align-items: center;
+            gap: 1rem;
             justify-content: center;
-            color: white;
-            font-size: 12px;
+        }
+
+        .mini-card {
+            flex: 1;
+            max-width: 180px;
+            background: #1a1a1a;
+            border: 1px solid rgba(149, 51, 86, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .mini-card:hover {
+            border-color: #953356;
+            transform: translateY(-2px);
+        }
+
+        .mini-card-id {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #953356;
+        }
+
+        .mini-card-amount {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .input-group {
@@ -313,41 +247,48 @@
 
         .input-group label {
             display: block;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
             font-weight: 500;
-            color: #4a5568;
-            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .input-group input, .input-group select {
+        .input-group input,
+        .input-group select {
             width: 100%;
-            padding: 1rem 1.25rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #ffffff;
             font-size: 1rem;
             transition: all 0.3s ease;
-            background: #ffffff;
-            color: #2d3748;
         }
 
-        .input-group input:focus, .input-group select:focus {
+        .input-group input:focus,
+        .input-group select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            transform: translateY(-1px);
+            border-color: #953356;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
         }
 
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
+            width: 100%;
             padding: 1rem 2rem;
-            border-radius: 12px;
+            background: #7b002c;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
             font-size: 1rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            width: 100%;
             position: relative;
             overflow: hidden;
         }
@@ -355,269 +296,314 @@
         .btn::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
         }
 
         .btn:hover {
+            background: #953356;
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 30px rgba(123, 0, 44, 0.4);
         }
 
         .btn:hover::before {
-            left: 100%;
+            width: 300px;
+            height: 300px;
         }
 
         .btn:active {
             transform: translateY(0);
         }
 
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .result {
             margin-top: 1.5rem;
-            padding: 1.25rem;
-            border-radius: 12px;
-            background: #f7fafc;
-            border: 1px solid #e2e8f0;
-            white-space: pre-wrap;
-            font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            font-family: 'SF Mono', 'Monaco', monospace;
             font-size: 0.85rem;
+            line-height: 1.6;
             max-height: 200px;
             overflow-y: auto;
-            line-height: 1.6;
+            display: none;
+        }
+
+        .result.success {
+            border-color: rgba(52, 211, 153, 0.3);
+            background: rgba(52, 211, 153, 0.05);
+        }
+
+        .result.error {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.05);
         }
 
         .token-display {
-            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin: 1rem 0;
-            border: 1px solid #bae6fd;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(149, 51, 86, 0.05);
+            border: 1px solid rgba(149, 51, 86, 0.2);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .token-display strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #953356;
+        }
+
+        .token-value {
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
             word-break: break-all;
-            font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+        }
+
+        .info-badge {
+            padding: 0.75rem 1rem;
+            background: rgba(149, 51, 86, 0.08);
+            border-left: 3px solid #953356;
+            border-radius: 4px;
             font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
         }
 
-        .success {
-            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-            border-color: #bbf7d0;
-            color: #166534;
-        }
-
-        .error {
-            background: linear-gradient(135deg, #fef2f2, #fee2e2);
-            border-color: #fecaca;
-            color: #dc2626;
-        }
-
-        .compact-card {
-            padding: 2rem;
-        }
-
-        .two-column {
+        .two-col {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
         }
 
-        .info-badge {
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
+            .nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
             }
 
             .container {
-                padding: 1rem;
+                padding: 6rem 1.5rem 2rem;
             }
 
-            .header h1 {
-                font-size: 2.5rem;
+            .hero h1 {
+                font-size: 3rem;
             }
 
-            .gift-card-display {
-                height: 200px;
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
 
-            .gift-card-amount {
-                font-size: 2.5rem;
+            .featured-card {
+                grid-column: 1;
             }
 
-            .two-column {
+            .two-col {
                 grid-template-columns: 1fr;
             }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(149, 51, 86, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(149, 51, 86, 0.5);
         }
     </style>
 </head>
 <body>
-<div class="background-pattern"></div>
+<nav class="nav">
+    <div class="logo">GIFT CARDS</div>
+    <div class="nav-links">
+        <a href="#" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Cards</a>
+        <a href="#" class="nav-link">Support</a>
+    </div>
+</nav>
 
 <div class="container">
-    <div class="header">
-        <h1>🎁 Gift Card System</h1>
-        <p>Gestiona tus tarjetas de regalo digitales</p>
+    <div class="hero">
+        <h1>Gift Card System</h1>
+        <p>Manage your digital gift cards with ease</p>
     </div>
 
-    <div class="main-content">
-        <div class="left-panel">
-            <!-- Featured Gift Card Display -->
-            <div class="card">
-                <div class="gift-card-display">
-                    <div class="gift-card-border">
-                        <span>❤️</span><span>😊</span><span>🛍️</span><span>❤️</span><span>😊</span><span>🔒</span><span>❤️</span><span>😊</span><span>🛍️</span><span>❤️</span>
-                    </div>
-
-                    <div class="gift-card-main">
-                        <div class="gift-card-pattern"></div>
-                        <div class="gift-card-store">GIFT CARD</div>
-
-                        <div class="gift-card-content">
-                            <div class="gift-card-amount" id="displayAmount">$1000</div>
-                            <div class="gift-card-label">BALANCE</div>
-                        </div>
-
-                        <div class="gift-card-smiley">😊</div>
-                    </div>
-
-                    <div class="gift-card-bottom-pattern"></div>
-                </div>
-
-                <h2>
-                    <div class="icon">🎁</div>
-                    Tarjetas Disponibles
-                </h2>
-                <div class="info-badge">
-                    💡 Datos de prueba: alice/1234, bob/abcd | Tarjetas: card01 ($1000), card02 ($500)
-                </div>
-                <div class="two-column">
-                    <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
-                        <div style="font-weight: 600; color: #667eea;">card01</div>
-                        <div style="font-size: 0.85rem; color: #64748b;">$1000</div>
-                    </div>
-                    <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
-                        <div style="font-weight: 600; color: #667eea;">card02</div>
-                        <div style="font-size: 0.85rem; color: #64748b;">$500</div>
-                    </div>
-                </div>
+    <div class="grid">
+        <!-- Featured Card Display -->
+        <div class="card featured-card">
+            <div class="card-header">
+                <div class="card-icon">🎁</div>
+                <h2>Available Cards</h2>
             </div>
 
-            <!-- Login Card -->
-            <div class="card compact-card">
-                <h2>
-                    <div class="icon">🔐</div>
-                    Login
-                </h2>
-                <div class="input-group">
-                    <label for="loginUser">Usuario</label>
-                    <input type="text" id="loginUser" placeholder="Ingresa tu usuario" value="alice">
-                </div>
-                <div class="input-group">
-                    <label for="loginPassword">Contraseña</label>
-                    <input type="password" id="loginPassword" placeholder="Ingresa tu contraseña" value="1234">
-                </div>
-                <button class="btn" onclick="login()">Iniciar Sesión</button>
-                <div id="tokenDisplay" class="token-display" style="display: none;">
-                    <strong>🎫 Token de Acceso:</strong>
-                    <div id="tokenValue" style="margin-top: 0.5rem; opacity: 0.8;"></div>
-                </div>
-                <div id="loginResult" class="result" style="display: none;"></div>
+            <div class="gift-card-visual">
+                <div class="card-shine"></div>
+                <div class="card-amount" id="displayAmount">$1000</div>
+                <div class="card-id">CARD-001</div>
             </div>
 
-            <!-- Redeem Card -->
-            <div class="card compact-card">
-                <h2>
-                    <div class="icon">✨</div>
-                    Redimir Tarjeta
-                </h2>
-                <div class="info-badge">
-                    ⚠️ Primero debes redimir una tarjeta para poder usarla
+            <div class="info-badge">
+                💡 Test Data: Emilio/motos123, Julio/polimorfismo | Cards: GiftCard1 ($1000), GiftCard2 ($5000)
+            </div>
+
+            <div class="cards-display">
+                <div class="mini-card">
+                    <div class="mini-card-id">GiftCard1</div>
+                    <div class="mini-card-amount">$1,000</div>
                 </div>
-                <div class="input-group">
-                    <label for="redeemCard">ID de Tarjeta</label>
-                    <input type="text" id="redeemCard" placeholder="card01" value="card01">
+                <div class="mini-card">
+                    <div class="mini-card-id">GiftCard2</div>
+                    <div class="mini-card-amount">$5,000</div>
                 </div>
-                <button class="btn" onclick="redeemCard()">Redimir Tarjeta</button>
-                <div id="redeemResult" class="result" style="display: none;"></div>
             </div>
         </div>
 
-        <div class="right-panel">
-            <!-- Check Balance -->
-            <div class="card compact-card">
-                <h2>
-                    <div class="icon">💰</div>
-                    Consultar Balance
-                </h2>
-                <div class="input-group">
-                    <label for="balanceCard">ID de Tarjeta</label>
-                    <input type="text" id="balanceCard" placeholder="card01" value="card01">
-                </div>
-                <button class="btn" onclick="checkBalance()">Ver Balance</button>
-                <div id="balanceResult" class="result" style="display: none;"></div>
+        <!-- Login -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🔐</div>
+                <h2>Login</h2>
             </div>
 
-            <!-- View Details -->
-            <div class="card compact-card">
-                <h2>
-                    <div class="icon">📋</div>
-                    Historial de Cargos
-                </h2>
-                <div class="input-group">
-                    <label for="detailsCard">ID de Tarjeta</label>
-                    <input type="text" id="detailsCard" placeholder="card01" value="card01">
-                </div>
-                <button class="btn" onclick="viewDetails()">Ver Historial</button>
-                <div id="detailsResult" class="result" style="display: none;"></div>
+            <div class="input-group">
+                <label for="loginUser">Username</label>
+                <input type="text" id="loginUser" placeholder="Enter username" value="Emilio">
             </div>
 
-            <!-- Merchant Charge -->
-            <div class="card compact-card">
-                <h2>
-                    <div class="icon">🛒</div>
-                    Realizar Cargo
-                </h2>
-                <div class="input-group">
-                    <label for="chargeMerchant">Comercio</label>
-                    <select id="chargeMerchant">
-                        <option value="">Selecciona un comercio...</option>
-                        <option value="AMAZON">AMAZON</option>
-                        <option value="SHOP">SHOP</option>
-                    </select>
-                </div>
-                <div class="two-column">
-                    <div class="input-group">
-                        <label for="chargeCard">ID de Tarjeta</label>
-                        <input type="text" id="chargeCard" placeholder="card01" value="card01">
-                    </div>
-                    <div class="input-group">
-                        <label for="amount">Monto</label>
-                        <input type="number" id="amount" placeholder="100" min="1" value="100">
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label for="description">Descripción</label>
-                    <input type="text" id="description" placeholder="Compra de prueba" value="Compra de prueba">
-                </div>
-                <button class="btn" onclick="merchantCharge()">Procesar Cargo</button>
-                <div id="chargeResult" class="result" style="display: none;"></div>
+            <div class="input-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password" value="motos123">
             </div>
+
+            <button class="btn" onclick="login()">Sign In</button>
+
+            <div id="tokenDisplay" class="token-display">
+                <strong>🎫 Access Token</strong>
+                <div id="tokenValue" class="token-value"></div>
+            </div>
+
+            <div id="loginResult" class="result"></div>
+        </div>
+
+        <!-- Redeem -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">✨</div>
+                <h2>Redeem Card</h2>
+            </div>
+
+            <div class="info-badge">
+                ⚠️ You must redeem a card before using it
+            </div>
+
+            <div class="input-group">
+                <label for="redeemCard">Card ID</label>
+                <input type="text" id="redeemCard" placeholder="GiftCard1" value="GiftCard1">
+            </div>
+
+            <button class="btn" onclick="redeemCard()">Redeem</button>
+            <div id="redeemResult" class="result"></div>
+        </div>
+
+        <!-- Balance -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">💰</div>
+                <h2>Check Balance</h2>
+            </div>
+
+            <div class="input-group">
+                <label for="balanceCard">Card ID</label>
+                <input type="text" id="balanceCard" placeholder="GiftCard1" value="GiftCard1">
+            </div>
+
+            <button class="btn" onclick="checkBalance()">Check</button>
+            <div id="balanceResult" class="result"></div>
+        </div>
+
+        <!-- Details -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">📋</div>
+                <h2>Transaction History</h2>
+            </div>
+
+            <div class="input-group">
+                <label for="detailsCard">Card ID</label>
+                <input type="text" id="detailsCard" placeholder="GiftCard1" value="GiftCard1">
+            </div>
+
+            <button class="btn" onclick="viewDetails()">View</button>
+            <div id="detailsResult" class="result"></div>
+        </div>
+
+        <!-- Charge -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🛒</div>
+                <h2>Make Charge</h2>
+            </div>
+
+            <div class="input-group">
+                <label for="chargeMerchant">Merchant</label>
+                <select id="chargeMerchant">
+                    <option value="">Select merchant...</option>
+                    <option value="Harley Davidson">Harley Davidson</option>
+                    <option value="NBA Store">NBA Store</option>
+                    <option value="F1 store">F1 Store</option>
+                </select>
+            </div>
+
+            <div class="two-col">
+                <div class="input-group">
+                    <label for="chargeCard">Card ID</label>
+                    <input type="text" id="chargeCard" placeholder="GiftCard1" value="GiftCard1">
+                </div>
+                <div class="input-group">
+                    <label for="amount">Amount</label>
+                    <input type="number" id="amount" placeholder="100" min="1" value="100">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="description">Description</label>
+                <input type="text" id="description" placeholder="Purchase description" value="Test purchase">
+            </div>
+
+            <button class="btn" onclick="merchantCharge()">Process</button>
+            <div id="chargeResult" class="result"></div>
         </div>
     </div>
 </div>
@@ -638,7 +624,7 @@
         const password = document.getElementById('loginPassword').value;
 
         if (!user || !password) {
-            showResult('loginResult', { error: 'Por favor ingresa usuario y contraseña' }, true);
+            showResult('loginResult', { error: 'Please enter username and password' }, true);
             return;
         }
 
@@ -653,12 +639,12 @@
                 currentToken = data.token;
                 document.getElementById('tokenDisplay').style.display = 'block';
                 document.getElementById('tokenValue').textContent = data.token;
-                showResult('loginResult', { message: '✅ Login exitoso!', token: data.token });
+                showResult('loginResult', { message: '✅ Login successful!', token: data.token });
             } else {
                 showResult('loginResult', data, true);
             }
         } catch (error) {
-            showResult('loginResult', { error: 'Error de conexión: ' + error.message }, true);
+            showResult('loginResult', { error: 'Connection error: ' + error.message }, true);
         }
     }
 
@@ -666,12 +652,12 @@
         const cardId = document.getElementById('redeemCard').value;
 
         if (!currentToken) {
-            showResult('redeemResult', { error: 'Por favor inicia sesión primero' }, true);
+            showResult('redeemResult', { error: 'Please login first' }, true);
             return;
         }
 
         if (!cardId) {
-            showResult('redeemResult', { error: 'Por favor ingresa el ID de la tarjeta' }, true);
+            showResult('redeemResult', { error: 'Please enter card ID' }, true);
             return;
         }
 
@@ -684,8 +670,7 @@
             });
 
             if (response.ok) {
-                const text = await response.text();
-                showResult('redeemResult', { message: '✅ Tarjeta redimida correctamente!' });
+                showResult('redeemResult', { message: '✅ Card redeemed successfully!' });
             } else {
                 const data = await response.json();
                 showResult('redeemResult', data, true);
@@ -699,12 +684,12 @@
         const cardId = document.getElementById('balanceCard').value;
 
         if (!currentToken) {
-            showResult('balanceResult', { error: 'Por favor inicia sesión primero' }, true);
+            showResult('balanceResult', { error: 'Please login first' }, true);
             return;
         }
 
         if (!cardId) {
-            showResult('balanceResult', { error: 'Por favor ingresa el ID de la tarjeta' }, true);
+            showResult('balanceResult', { error: 'Please enter card ID' }, true);
             return;
         }
 
@@ -719,7 +704,7 @@
 
             if (response.ok) {
                 showResult('balanceResult', data);
-                document.getElementById('displayAmount').textContent = '$' + data.balance;
+                document.getElementById('displayAmount').textContent = '$' + data.balance.toLocaleString();
             } else {
                 showResult('balanceResult', data, true);
             }
@@ -732,12 +717,12 @@
         const cardId = document.getElementById('detailsCard').value;
 
         if (!currentToken) {
-            showResult('detailsResult', { error: 'Por favor inicia sesión primero' }, true);
+            showResult('detailsResult', { error: 'Please login first' }, true);
             return;
         }
 
         if (!cardId) {
-            showResult('detailsResult', { error: 'Por favor ingresa el ID de la tarjeta' }, true);
+            showResult('detailsResult', { error: 'Please enter card ID' }, true);
             return;
         }
 
@@ -767,19 +752,18 @@
         const description = document.getElementById('description').value;
 
         if (!merchant || !cardId || !amount || !description) {
-            showResult('chargeResult', { error: 'Por favor completa todos los campos' }, true);
+            showResult('chargeResult', { error: 'Please fill all fields' }, true);
             return;
         }
 
         try {
             const response = await fetch(
-                `${API_BASE}/${cardId}/charge?merchant=${merchant}&amount=${amount}&description=${encodeURIComponent(description)}`,
+                `${API_BASE}/${cardId}/charge?merchant=${encodeURIComponent(merchant)}&amount=${amount}&description=${encodeURIComponent(description)}`,
                 { method: 'POST' }
             );
 
             if (response.ok) {
-                const text = await response.text();
-                showResult('chargeResult', { message: '✅ Cargo realizado correctamente!' });
+                showResult('chargeResult', { message: '✅ Charge processed successfully!' });
             } else {
                 const data = await response.json();
                 showResult('chargeResult', data, true);
@@ -789,16 +773,16 @@
         }
     }
 
-    // Animate display amount on load
+    // Animate card amount display
     window.addEventListener('load', () => {
-        const amounts = ['$1000', '$500', '$750', '$250'];
+        const amounts = [1000, 5000, 750, 2500];
         let currentIndex = 0;
         const displayElement = document.getElementById('displayAmount');
 
         setInterval(() => {
             displayElement.style.opacity = '0';
             setTimeout(() => {
-                displayElement.textContent = amounts[currentIndex];
+                displayElement.textContent = '$' + amounts[currentIndex].toLocaleString();
                 displayElement.style.opacity = '1';
                 currentIndex = (currentIndex + 1) % amounts.length;
             }, 300);
