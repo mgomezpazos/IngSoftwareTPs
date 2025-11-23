@@ -14,22 +14,21 @@ public class UserSession {
         this.stamp = stamp;
     }
 
-    public String userAliveAt( LocalDateTime now ) {
-        assertIsActive( now );
+    public String userAliveAt(LocalDateTime now) {
+        assertIsActive(now);
         return user;
     }
 
     public boolean isActiveAt( LocalDateTime now ) {
-        boolean afterCreation = !now.isBefore( stamp );  // now >= stamp
-        boolean beforeExpiration = now.isBefore( stamp.plusMinutes( SESSION_DURATION_MINUTES ) );
+        boolean afterCreation = !now.isBefore(stamp);
+        boolean beforeExpiration = now.isBefore( stamp.plusMinutes(SESSION_DURATION_MINUTES));
         return afterCreation && beforeExpiration;
     }
 
     private void assertIsActive( LocalDateTime now ) {
-        if ( !isActiveAt( now ) ) throw new RuntimeException( SessionExpired );
+        if (!isActiveAt(now)) throw new RuntimeException(SessionExpired);
     }
 
-    // accessors
-    public String user() {          return user;  }
-    public LocalDateTime stamp() {  return stamp; }
+    public String user() {return user;}
+    public LocalDateTime stamp() {return stamp;}
 }

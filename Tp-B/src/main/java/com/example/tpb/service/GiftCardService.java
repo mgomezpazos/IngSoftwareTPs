@@ -9,35 +9,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class GiftCardService {
-
     @Autowired private GiftCardRepository repository;
 
-    @Transactional( readOnly = true )
-    public GiftCard findById( String id ) {
-        GiftCardEntity entity = repository.findById( id )
-                .orElseThrow( () -> new RuntimeException( GiftCard.InvalidCard ) );
-        return toModel( entity );
+    @Transactional(readOnly = true)
+    public GiftCard findById(String id) {
+        GiftCardEntity entity = repository.findById(id).orElseThrow(() -> new RuntimeException(GiftCard.InvalidCard));
+        return toModel(entity);
     }
 
     @Transactional
-    public GiftCard save( GiftCard card ) {
-        GiftCardEntity entity = repository.findById( card.id() )
-                .orElse( new GiftCardEntity( card.id(), card.balance() ) );
-        updateEntity( entity, card );
-        repository.save( entity );
+    public GiftCard save(GiftCard card) {
+        GiftCardEntity entity = repository.findById(card.id()).orElse(new GiftCardEntity(card.id(), card.balance()));
+        updateEntity(entity, card);
+        repository.save(entity);
         return card;
     }
 
     @Transactional( readOnly = true )
-    public long count() {
-        return repository.count();
-    }
+    public long count() {return repository.count();}
 
-    public void delete( String id ) {
-        repository.deleteById( id );
-    }
-
-    // Entity <-> Model conversion
+    public void delete( String id ) {repository.deleteById( id );}
 
     private GiftCard toModel( GiftCardEntity entity ) {
         return new GiftCard(

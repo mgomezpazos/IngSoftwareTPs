@@ -7,17 +7,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table( name = "users" )
+@Table(name = "users")
 @Getter @Setter
 public class UserEntity {
-
     @Id
     private String username;
     private String password;
 
     public UserEntity() {}
-
-    public UserEntity( String username, String password ) {
+    public UserEntity(String username, String password) {
         this.username = username;
         this.password = password;
     }

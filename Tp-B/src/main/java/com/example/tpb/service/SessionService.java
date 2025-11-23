@@ -16,18 +16,13 @@ public class SessionService {
 
     @Autowired private SessionRepository repository;
 
-    @Transactional( readOnly = true )
-    public UserSession findById( UUID token ) {
-        SessionEntity entity = repository.findById( token )
-                .orElseThrow( () -> new RuntimeException( GiftCardFacade.InvalidToken ) );
-        return new UserSession( entity.getUsername(), entity.getStamp() );
+    @Transactional( readOnly = true)
+    public UserSession findById(UUID token) {
+        SessionEntity entity = repository.findById(token).orElseThrow(() -> new RuntimeException(GiftCardFacade.InvalidToken));
+        return new UserSession(entity.getUsername(), entity.getStamp());
     }
 
-    public void save( UUID token, String username, LocalDateTime stamp ) {
-        repository.save( new SessionEntity( token, username, stamp ) );
-    }
+    public void save(UUID token, String username, LocalDateTime stamp) {repository.save(new SessionEntity(token, username, stamp));}
 
-    public void delete( UUID token ) {
-        repository.deleteById( token );
-    }
+    public void delete( UUID token ) {repository.deleteById( token );}
 }

@@ -7,16 +7,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table( name = "merchants" )
+@Table(name = "merchants")
 @Getter @Setter
 public class MerchantEntity {
-
     @Id
     private String code;
-
     public MerchantEntity() {}
-
-    public MerchantEntity( String code ) {
-        this.code = code;
-    }
+    public MerchantEntity(String code) {this.code = code;}
 }

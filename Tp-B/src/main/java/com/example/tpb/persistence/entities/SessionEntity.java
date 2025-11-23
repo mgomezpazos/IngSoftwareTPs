@@ -10,18 +10,16 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table( name = "sessions" )
+@Table(name = "sessions")
 @Getter @Setter
 public class SessionEntity {
-
     @Id
     private UUID token;
     private String username;
     private LocalDateTime stamp;
 
     public SessionEntity() {}
-
-    public SessionEntity( UUID token, String username, LocalDateTime stamp ) {
+    public SessionEntity(UUID token, String username, LocalDateTime stamp) {
         this.token = token;
         this.username = username;
         this.stamp = stamp;

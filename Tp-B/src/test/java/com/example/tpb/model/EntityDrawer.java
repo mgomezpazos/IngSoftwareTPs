@@ -8,21 +8,12 @@ import java.util.Random;
 
 public class EntityDrawer {
 
-    static private Random rnd = new Random( Instant.now().getEpochSecond() );
+    static private Random rnd= new Random(Instant.now().getEpochSecond());
 
-    static public UserEntity someUser() {
-        return new UserEntity( "TestUser" + rnd.nextInt(), "pass123" );
-    }
+    static public UserEntity someUser() {return new UserEntity("Manu" + rnd.nextInt(), "manu123");}
 
-    static public MerchantEntity someMerchant() {
-        return new MerchantEntity( "TestMerchant" + rnd.nextInt() );
-    }
+    static public MerchantEntity someMerchant() {return new MerchantEntity("TestMerchant" + rnd.nextInt());}
 
-    static public String someCardId() {
-        return "CARD" + rnd.nextInt( 100000, 999999 );
-    }
-
-    static public int randomAmount() {
-        return rnd.nextInt( 100, 1000 );
-    }
+    static public String someCardId() {return "CARD" + rnd.nextInt(100000, 999999);}
+    static public int randomAmount() {return rnd.nextInt(100, 1000);}
 }

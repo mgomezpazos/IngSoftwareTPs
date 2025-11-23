@@ -12,22 +12,15 @@ public class UserService {
 
     @Autowired private UserRepository repository;
 
-    @Transactional( readOnly = true )
-    public UserEntity findById( String username ) {
-        return repository.findById( username )
-                .orElseThrow( () -> new RuntimeException( GiftCardFacade.InvalidUser ) );
+    @Transactional(readOnly= true)
+    public UserEntity findById(String username) {
+        return repository.findById(username).orElseThrow(() -> new RuntimeException(GiftCardFacade.InvalidUser));
     }
 
-    public UserEntity save( UserEntity user ) {
-        return repository.save( user );
-    }
+    public UserEntity save( UserEntity user) {return repository.save(user);}
 
-    @Transactional( readOnly = true )
-    public long count() {
-        return repository.count();
-    }
+    @Transactional(readOnly= true)
+    public long count() {return repository.count();}
 
-    public void delete( String username ) {
-        repository.deleteById( username );
-    }
+    public void delete( String username ) {repository.deleteById( username );}
 }

@@ -14,21 +14,13 @@ public class MerchantService {
 
     @Transactional( readOnly = true )
     public void assertExists( String merchantKey ) {
-        if ( !repository.existsById( merchantKey ) ) {
-            throw new RuntimeException( GiftCardFacade.InvalidMerchant );
-        }
+        if ( !repository.existsById( merchantKey ) ) {throw new RuntimeException( GiftCardFacade.InvalidMerchant );}
     }
 
-    public MerchantEntity save( MerchantEntity merchant ) {
-        return repository.save( merchant );
-    }
+    public MerchantEntity save( MerchantEntity merchant ) {return repository.save( merchant );}
 
-    @Transactional( readOnly = true )
-    public long count() {
-        return repository.count();
-    }
+    @Transactional(readOnly = true)
+    public long count() {return repository.count();}
 
-    public void delete( String code ) {
-        repository.deleteById( code );
-    }
+    public void delete( String code ) {repository.deleteById( code );}
 }

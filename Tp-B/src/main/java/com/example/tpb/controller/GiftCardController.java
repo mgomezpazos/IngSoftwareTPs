@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.tpb.model.GiftCardFacade;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -14,11 +13,9 @@ import java.util.UUID;
 public class GiftCardController {
 
     @Autowired private GiftCardFacade facade;
-
     @ExceptionHandler( RuntimeException.class )
     public ResponseEntity<?> handleException( RuntimeException ex ) {
-        return ResponseEntity.internalServerError()
-                .body( Map.of( "error", ex.getMessage() ) );
+        return ResponseEntity.internalServerError().body( Map.of( "error", ex.getMessage() ) );
     }
 
     @PostMapping( value = "/login", params = { "user", "pass" } )
