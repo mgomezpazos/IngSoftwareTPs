@@ -25,7 +25,6 @@ public class GiftCard {
 
     public GiftCard(String id, int balance, String owner, List<String> charges) {
         validateId(id);
-        //validateBalance(balance);
         this.id= id;
         this.balance= balance;
         this.owner= owner;
