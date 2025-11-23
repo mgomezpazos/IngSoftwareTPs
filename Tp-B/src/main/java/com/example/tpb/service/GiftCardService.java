@@ -13,35 +13,45 @@ public class GiftCardService {
 
     @Transactional(readOnly = true)
     public GiftCard findById(String id) {
-        GiftCardEntity entity = repository.findById(id).orElseThrow(() -> new RuntimeException(GiftCard.InvalidCard));
+        GiftCardEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException(GiftCard.InvalidCard));
         return toModel(entity);
     }
 
     @Transactional
     public GiftCard save(GiftCard card) {
-        GiftCardEntity entity = repository.findById(card.id()).orElse(new GiftCardEntity(card.id(), card.balance()));
+        GiftCardEntity entity = repository.findById(card.id())
+                .orElse(new GiftCardEntity(card.id(), card.balance()));
         updateEntity(entity, card);
         repository.save(entity);
         return card;
     }
 
-    @Transactional( readOnly = true )
-    public long count() {return repository.count();}
-
-    public void delete( String id ) {repository.deleteById( id );}
-
-    private GiftCard toModel( GiftCardEntity entity ) {
-        return new GiftCard(
-                entity.getId(),
-                entity.getBalance(),
-                entity.getOwner(),
-                entity.getCharges()
-        );
+    @Transactional(readOnly = true)
+    public long count() {
+        return repository.count();
     }
 
-    private void updateEntity( GiftCardEntity entity, GiftCard card ) {
-        entity.setBalance( card.balance() );
-        entity.setOwner( card.owner() );
-        entity.setCharges( card.charges() );
+    public void delete(String id) {
+        repository.deleteById(id);
+    }
+
+    private GiftCard toModel(GiftCardEntity entity) {
+        if (entity.getOwner() != null && !entity.getOwner().isEmpty()) {
+            return new GiftCard(
+                    entity.getId(),
+                    entity.getBalance(),
+                    entity.getOwner(),
+                    entity.getCharges()
+            );
+        } else {
+            return new GiftCard(entity.getId(), entity.getBalance());
+        }
+    }
+
+    private void updateEntity(GiftCardEntity entity, GiftCard card) {
+        entity.setBalance(card.balance());
+        entity.setOwner(card.owner());
+        entity.setCharges(new java.util.ArrayList<>(card.charges())); // Defensive copy
     }
 }
